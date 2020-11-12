@@ -1,12 +1,12 @@
 .main-sidenav-container {
     width: auto;
-    height: 93%;  
+    height: 93.2%;  
 }
   
 .main-sidenav-content {
     display: flex; 
-    width: 50%;
-    height: 100%;
+    width: auto;
+    height: 93.2%;
     align-items: center;
     justify-content: center;
 }

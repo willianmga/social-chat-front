@@ -1,1 +1,74 @@
-<p>personal-chat works!</p>
+<mat-toolbar >
+    <span>Chats</span>
+</mat-toolbar>
+
+<mat-sidenav-container class="main-sidenav-container" autosize>
+
+    <mat-sidenav #chatsidenav mode="side" color="primary" opened [fixedInViewport]="false" [fixedTopGap]="true" [fixedBottomGap]="true">
+
+        <mat-card>
+            <mat-card-header>
+                <div>
+                    <mat-form-field>
+                        <mat-label>Search a contact</mat-label>
+                        <input #input matInput matNativeControl [matAutocomplete]="auto" placeholder="Type the contact name">
+                        <mat-autocomplete #auto="matAutocomplete">
+                            <mat-option *ngFor="let contact of contacts" value="{{contact.name}}">
+                                {{contact.name}}
+                            </mat-option>
+                        </mat-autocomplete>
+                    </mat-form-field>
+        
+                    <button mat-icon-button aria-label="Test">
+                        <mat-icon>search</mat-icon>
+                    </button> 
+                </div>
+            </mat-card-header>
+        </mat-card>
+
+        <nav>
+            <mat-selection-list [multiple]="false">
+                <mat-list-option *ngFor="let contact of contacts" (click)="openContact(contact)">
+                    <img mat-list-avatar src="{{contact.avatar}}"/>
+                    <h1 matLine>{{contact.name}}</h1>
+                    <h3 matLine>{{contact.status}}</h3>
+                </mat-list-option>
+            </mat-selection-list>  
+        </nav>
+    </mat-sidenav>
+
+    <mat-sidenav-content class="main-sidenav-content">
+
+        <mat-card class="message-container">
+            <mat-card-header>                    
+                <img mat-card-avatar src="{{contact.avatar}}"/>        
+                <mat-card-title>{{contact.name}}</mat-card-title>
+                <mat-card-subtitle>{{contact.status}}</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content class="message-area">
+                <div >
+                    <mat-form-field>
+                        <textarea matInput readonly="true" ></textarea>
+                    </mat-form-field>
+                </div>
+            </mat-card-content>
+            <mat-card-actions>
+                <div class="message-type-area">
+                    <mat-form-field hintLabel="Max 280 characters" appearance="fill">
+                        <mat-label>Message</mat-label>
+                        <input #input matInput matNativeControl maxlength="280" placeholder="Type your message">
+                        <mat-hint align="end">{{ input.value?.length || 0 }}/280</mat-hint>
+                    </mat-form-field>
+        
+                    <button mat-icon-button aria-label="Test">
+                        <mat-icon>send</mat-icon>
+                    </button> 
+                </div>
+            </mat-card-actions>
+                    
+        </mat-card>
+
+
+    </mat-sidenav-content>
+
+</mat-sidenav-container>

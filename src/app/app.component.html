@@ -1,38 +1,38 @@
 
 <mat-toolbar color="primary">
-  <button mat-icon-button class="example-icon" aria-label="Test" (click)="sidenav.toggle()">
+  <button mat-icon-button aria-label="Test" (click)="sidenav.toggle()">
     <mat-icon>menu</mat-icon>
   </button>
-  <span>Reactive chat with websockets</span>
+  <span>{{title}}</span>
 </mat-toolbar>
 
 <mat-sidenav-container class="main-sidenav-container" autosize>
 
   <mat-sidenav #sidenav mode="side" color="primary"  opened [fixedInViewport]="false" [fixedTopGap]="false" [fixedBottomGap]="true">
     <nav>
-      <mat-list>
-        <mat-list-item>
-          <button mat-icon-button class="example-icon" aria-label="Test" routerLink="notifications">
-            <mat-icon>notifications</mat-icon>
+      <mat-selection-list [multiple]="false">
+        <mat-list-option routerLink="notifications">
+          <button mat-icon-button aria-label="Test" routerLink="notifications">
+            <mat-icon>notifications_active</mat-icon>
           </button>
-        </mat-list-item>
-        <mat-list-item>
-          <button mat-icon-button class="example-icon" aria-label="Test" routerLink="chat">
+        </mat-list-option>
+        <mat-list-option routerLink="chat">
+          <button mat-icon-button aria-label="Test">
             <mat-icon>chat</mat-icon>
           </button>    
-        </mat-list-item>
-        <mat-list-item>
-          <button mat-icon-button class="example-icon" aria-label="Test" routerLink="groups">
+        </mat-list-option>
+        <mat-list-option routerLink="groups">
+          <button mat-icon-button aria-label="Test">
             <mat-icon>group</mat-icon>
           </button>    
-        </mat-list-item>      
+        </mat-list-option>      
 
-        <mat-list-item>
-          <button mat-icon-button class="example-icon" aria-label="Test" routerLink="settings">
+        <mat-list-option routerLink="settings">
+          <button mat-icon-button aria-label="Test">
             <mat-icon>settings</mat-icon>
           </button>    
-        </mat-list-item>          
-      </mat-list>
+        </mat-list-option>          
+      </mat-selection-list>
     </nav>
   </mat-sidenav>
 
