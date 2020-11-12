@@ -2,4 +2,4 @@
 
 Screenshots
 
-![Chat Screen](./screenshots/chat.png "Title")
+![Chat Screen](/screenshots/chat.png)
