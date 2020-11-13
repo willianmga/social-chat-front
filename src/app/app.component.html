@@ -1,34 +1,45 @@
 
 <mat-toolbar color="primary">
-  <button mat-icon-button aria-label="Test" (click)="sidenav.toggle()">
+  <button mat-icon-button  (click)="sidenav.toggle()">
     <mat-icon>menu</mat-icon>
   </button>
   <span>{{title}}</span>
+  <span class="spacer"></span>
+
+  <button mat-icon-button [matMenuTriggerFor]="notification" style="margin-right: 10px;">
+    <mat-icon>notifications_active</mat-icon>
+  </button>
+  <mat-menu #notification="matMenu">
+    <span mat-menu-item>No notifications to show</span>
+  </mat-menu>
+
+  <button mat-icon-button [matMenuTriggerFor]="menu">
+    <img mat-card-avatar src="{{loggedInUser.avatar}}"/>
+  </button>
+  <mat-menu #menu="matMenu">
+    <span mat-menu-item>Logged as: {{loggedInUser.name}}</span>
+  </mat-menu>
+
 </mat-toolbar>
 
 <mat-sidenav-container class="main-sidenav-container" autosize>
 
   <mat-sidenav #sidenav mode="side" color="primary"  opened [fixedInViewport]="false" [fixedTopGap]="false" [fixedBottomGap]="true">
     <nav>
-      <mat-selection-list [multiple]="false">
-        <mat-list-option routerLink="notifications">
-          <button mat-icon-button aria-label="Test" routerLink="notifications">
-            <mat-icon>notifications_active</mat-icon>
-          </button>
-        </mat-list-option>
+      <mat-selection-list [multiple]="false" >
         <mat-list-option routerLink="chat">
-          <button mat-icon-button aria-label="Test">
+          <button mat-icon-button >
             <mat-icon>chat</mat-icon>
           </button>    
         </mat-list-option>
         <mat-list-option routerLink="groups">
-          <button mat-icon-button aria-label="Test">
+          <button mat-icon-button >
             <mat-icon>group</mat-icon>
           </button>    
         </mat-list-option>      
 
         <mat-list-option routerLink="settings">
-          <button mat-icon-button aria-label="Test">
+          <button mat-icon-button >
             <mat-icon>settings</mat-icon>
           </button>    
         </mat-list-option>          

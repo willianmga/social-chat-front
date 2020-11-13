@@ -1,6 +1,8 @@
 .main-sidenav-container {
     width: auto;
     height: 93.2%;  
+    align-items: center;
+    justify-content: center;    
 }
   
 .main-sidenav-content {
@@ -9,4 +11,8 @@
     height: 93.2%;
     align-items: center;
     justify-content: center;
+}
+
+.spacer {
+    flex: 1 1 auto;
 }

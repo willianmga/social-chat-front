@@ -11,13 +11,14 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatGridListModule } from '@angular/material/grid-list';
+import { MatTableModule } from '@angular/material/table';
+import { MatMenuModule } from '@angular/material/menu';
 
-import { AppRoutingModule } from './app-routing.module'
+import { AppRoutingModule } from './app-routing.module';
 
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { PersonalChatComponent } from './personal-chat/personal-chat.component';
-import { NotificationsComponent } from './notifications/notifications.component';
 import { SettingsComponent } from './settings/settings.component';
 import { GroupChatComponent } from './group-chat/group-chat.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
@@ -26,7 +27,6 @@ import { DashboardComponent } from './dashboard/dashboard.component';
   declarations: [
     AppComponent,
     PersonalChatComponent,
-    NotificationsComponent,
     SettingsComponent,
     GroupChatComponent,
     DashboardComponent
@@ -45,7 +45,9 @@ import { DashboardComponent } from './dashboard/dashboard.component';
     MatFormFieldModule,
     MatInputModule,
     MatAutocompleteModule,
-    MatGridListModule
+    MatGridListModule,
+    MatTableModule,
+    MatMenuModule
   ],
   providers: [],
   bootstrap: [AppComponent]

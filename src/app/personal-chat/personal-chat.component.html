@@ -1,12 +1,9 @@
-<mat-toolbar >
-    <span>Chats</span>
-</mat-toolbar>
 
 <mat-sidenav-container class="main-sidenav-container" autosize>
 
-    <mat-sidenav #chatsidenav mode="side" color="primary" opened [fixedInViewport]="false" [fixedTopGap]="true" [fixedBottomGap]="true">
+    <mat-sidenav #chatsidenav mode="side" class="message-list-container" opened [fixedInViewport]="false" [fixedTopGap]="true" [fixedBottomGap]="true">
 
-        <mat-card>
+        <mat-card  class="message-list-container">
             <mat-card-header>
                 <div>
                     <mat-form-field>
@@ -31,10 +28,14 @@
                 <mat-list-option *ngFor="let contact of contacts" (click)="openContact(contact)">
                     <img mat-list-avatar src="{{contact.avatar}}"/>
                     <h1 matLine>{{contact.name}}</h1>
-                    <h3 matLine>{{contact.status}}</h3>
+                    <h3 *ngIf="contact.chatHistory.length === 0"  matLine>{{contact.status}}</h3>
+                    <h3 *ngIf="contact.chatHistory.length > 0" matLine style="font-weight: bold">{{contact.chatHistory[contact.chatHistory.length - 1]?.message}}</h3>
+                    <mat-divider></mat-divider>
                 </mat-list-option>
+                
             </mat-selection-list>  
         </nav>
+
     </mat-sidenav>
 
     <mat-sidenav-content class="main-sidenav-content">
@@ -46,13 +47,9 @@
                 <mat-card-subtitle>{{contact.status}}</mat-card-subtitle>
             </mat-card-header>
             <mat-card-content class="message-area">
-                <div >
-                    <mat-form-field>
-                        <textarea matInput readonly="true" ></textarea>
-                    </mat-form-field>
-                </div>
-            </mat-card-content>
-            <mat-card-actions>
+
+                <!-- Put table here -->
+
                 <div class="message-type-area">
                     <mat-form-field hintLabel="Max 280 characters" appearance="fill">
                         <mat-label>Message</mat-label>
@@ -63,8 +60,9 @@
                     <button mat-icon-button aria-label="Test">
                         <mat-icon>send</mat-icon>
                     </button> 
-                </div>
-            </mat-card-actions>
+                </div>                
+            </mat-card-content>
+
                     
         </mat-card>
 

@@ -10,10 +10,9 @@ mat-selection-list {
     padding-top: 0px;
 }
 
-
 .main-sidenav-container {
     width: auto;
-    height: 92.8%;  
+    height: 100%;  
 }
   
 .main-sidenav-content {
@@ -22,15 +21,22 @@ mat-selection-list {
     height: 100%;
 }
 
+.message-list-container {
+
+    background-color: grey;
+
+}
+
 .message-container {
     width: 100%;
-    height: 96%;
+    height: 96.4%;
+    background-color: grey;
 }
 
 .message-area {
-    background-color: lavender;
+    background-color: #CED0CE;
     border-radius: 1%;
-    height: 80%;
+    height: 93%;
 }
 
 .message-area textarea {
