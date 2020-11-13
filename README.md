@@ -1,5 +1,5 @@
 # SocialChat
 
-Screenshots
+view it live on:
 
-![Chat Screen](/screenshots/chat.png)
+https://willianmga.github.io/reactive-chat-front/
