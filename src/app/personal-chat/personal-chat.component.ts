@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { MatTableDataSource } from '@angular/material/table';
 
 import { ChatService } from '../chat.service';
 
@@ -9,18 +10,21 @@ import { ChatService } from '../chat.service';
 })
 export class PersonalChatComponent implements OnInit {
 
-  message: any;
-  contact: any = {chatHistory: []};
-  contacts: Array<any>;
-  chatService: ChatService;
   displayedColumns: string[] = ["message"];
+  messagesDataSource = new MatTableDataSource<any>([]);
 
-  constructor(private service: ChatService) { 
+  contact: any;
+  contacts: Array<any>;
+  loggedInUser: any;
 
-    this.chatService = service;
+  constructor(private chatService: ChatService) { 
 
     this.chatService.execChange.subscribe((message) => {
-        this.notifyMessage(message);
+        this.notifyReceivedMessage(message);
+    });
+
+    this.chatService.getLoggedInUser().subscribe(user => {
+        this.loggedInUser = user;
     });
 
   }
@@ -29,12 +33,51 @@ export class PersonalChatComponent implements OnInit {
     this.loadContacts();
   }
 
-  notifyMessage(message: any): void {
+  notifyReceivedMessage(message: any): void {
 
-    const contact = this.contacts.filter(contact => contact.id === message.from.id)[0];
+    this.addMessageToHistory(
+      () => this.contacts.filter(contact => contact.id === message.from.id)[0],
+      message
+    );
 
-    contact.chatHistory.push(message);
-    this.message = message;
+  }
+
+  notifySentMessage(message: any): void {
+
+    this.addMessageToHistory(
+      () => this.contacts.filter(contact => contact.id === message.to.id)[0],
+      message
+    );
+
+  }
+
+  addMessageToHistory(findDestinationContactFunction: any, message: any): void {
+
+    const destinationContact = findDestinationContactFunction();
+
+    destinationContact.chatHistory.push(message);
+
+    if (destinationContact.id === this.contact.id) {
+      this.refreshMessages(); 
+    }
+
+  }
+
+  sendMessage(message: string): void {
+
+    const sentMessage = {
+      to: this.contact,
+      from: this.loggedInUser,
+      message: message,
+      date: new Date()
+    };  
+    
+    this.notifySentMessage(sentMessage);
+
+  }
+
+  receivedMessage(message: any): boolean {
+    return message.from.id === this.contact.id;
   }
 
   loadContacts(): void {
@@ -48,6 +91,11 @@ export class PersonalChatComponent implements OnInit {
 
   openContact(contact: any): void {
     this.contact = contact;
+    this.refreshMessages();
+  }
+
+  refreshMessages(): void {
+    this.messagesDataSource.data = this.contact.chatHistory;
   }
 
 }

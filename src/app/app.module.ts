@@ -21,7 +21,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { PersonalChatComponent } from './personal-chat/personal-chat.component';
 import { SettingsComponent } from './settings/settings.component';
 import { GroupChatComponent } from './group-chat/group-chat.component';
-import { DashboardComponent } from './dashboard/dashboard.component';
 
 @NgModule({
   declarations: [
@@ -29,7 +28,6 @@ import { DashboardComponent } from './dashboard/dashboard.component';
     PersonalChatComponent,
     SettingsComponent,
     GroupChatComponent,
-    DashboardComponent
   ],
   imports: [
     BrowserModule,

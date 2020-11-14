@@ -1,7 +1,3 @@
-textarea {
-    resize: none;
-}
-
 mat-card {
     border-radius: 0%;
 }
@@ -22,29 +18,48 @@ mat-selection-list {
 }
 
 .message-list-container {
-
     background-color: grey;
-
 }
 
-.message-container {
+.message-card-container {
     width: 100%;
-    height: 96.4%;
     background-color: grey;
 }
 
+/* where the messages are shown */
 .message-area {
+
+    
+    display: flex;
+    flex-direction: column;
+    min-width: 100px;
+    height: 83%;
+
     background-color: #CED0CE;
     border-radius: 1%;
-    height: 93%;
 }
 
-.message-area textarea {
-    width: 500px !important;
-    height: 600px !important;
-    resize: none;
+.message-area-container {
+    flex: 1;
+    min-height: 20px;
+    overflow: auto;
+}
+
+table {
+    width: 100%;
+    border-radius: 1%;
+    min-height: 100%;
+}
+
+.mat-column-userId {
+    flex: 0 0 100px;
+    width: 100%;
 }
 
 .message-type-area mat-form-field {
-    width: 97%; 
+    width: 90%; 
+}
+
+.mediumIcon {
+    font-size: 35px;
 }

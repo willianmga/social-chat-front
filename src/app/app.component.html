@@ -1,20 +1,21 @@
 
 <mat-toolbar color="primary">
   <button mat-icon-button  (click)="sidenav.toggle()">
-    <mat-icon>menu</mat-icon>
+    <mat-icon [inline]="true" style="font-size: 30px;">menu</mat-icon>
   </button>
   <span>{{title}}</span>
+
   <span class="spacer"></span>
 
   <button mat-icon-button [matMenuTriggerFor]="notification" style="margin-right: 10px;">
-    <mat-icon>notifications_active</mat-icon>
+    <mat-icon [inline]="true" style="font-size: 30px;">notifications_active</mat-icon>
   </button>
   <mat-menu #notification="matMenu">
     <span mat-menu-item>No notifications to show</span>
   </mat-menu>
 
   <button mat-icon-button [matMenuTriggerFor]="menu">
-    <img mat-card-avatar src="{{loggedInUser.avatar}}"/>
+    <img mat-card-avatar src="{{avatar | async }}"/>
   </button>
   <mat-menu #menu="matMenu">
     <span mat-menu-item>Logged as: {{loggedInUser.name}}</span>
@@ -26,22 +27,18 @@
 
   <mat-sidenav #sidenav mode="side" color="primary"  opened [fixedInViewport]="false" [fixedTopGap]="false" [fixedBottomGap]="true">
     <nav>
-      <mat-selection-list [multiple]="false" >
+      <mat-selection-list [multiple]="false" style="padding-top: 0px;">
+
         <mat-list-option routerLink="chat">
-          <button mat-icon-button >
-            <mat-icon>chat</mat-icon>
-          </button>    
+          <mat-icon [inline]="true" style="font-size: 30px;">chat</mat-icon>
         </mat-list-option>
+
         <mat-list-option routerLink="groups">
-          <button mat-icon-button >
-            <mat-icon>group</mat-icon>
-          </button>    
+          <mat-icon [inline]="true" style="font-size: 30px;">group</mat-icon>
         </mat-list-option>      
 
-        <mat-list-option routerLink="settings">
-          <button mat-icon-button >
-            <mat-icon>settings</mat-icon>
-          </button>    
+        <mat-list-option routerLink="settings"  style="padding: 0px; margin: 0px;">
+          <mat-icon [inline]="true" style="font-size: 30px;">settings</mat-icon>
         </mat-list-option>          
       </mat-selection-list>
     </nav>

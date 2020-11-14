@@ -16,3 +16,7 @@
 .spacer {
     flex: 1 1 auto;
 }
+
+.mediumIcon {
+    font-size: 100px;
+}

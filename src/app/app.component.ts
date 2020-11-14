@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Observable } from 'rxjs';
 
 import { ChatService } from './chat.service';
 
@@ -9,14 +10,12 @@ import { ChatService } from './chat.service';
 })
 export class AppComponent {
   
-  chatService: ChatService;
   message: any;
   loggedInUser: any;
+  avatar: Observable<string>;
   title = 'SocialChat';
 
-  constructor(private service: ChatService) {
-
-    this.chatService = service;
+  constructor(private chatService: ChatService) {
 
     this.chatService.execChange.subscribe((response) => {
       this.message = response;
@@ -30,6 +29,12 @@ export class AppComponent {
     this.chatService
       .getLoggedInUser()
       .subscribe((response) => {
+        
+        this.avatar = Observable.create(observer => {
+          observer.next(response.avatar);
+          observer.complete();
+        })
+
         this.loggedInUser = response;
       })
   }

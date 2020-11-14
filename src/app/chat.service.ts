@@ -47,7 +47,7 @@ export class ChatService {
   execChange: Subject<any> = new Subject<any>();
 
   constructor() {
-    const source = interval(1000);
+    const source = interval(3000);
     source.subscribe(val => {
       this.execChange.next(this.generateRandomMessage());
     });
