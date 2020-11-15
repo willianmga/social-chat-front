@@ -1,5 +1,11 @@
 import { Injectable } from '@angular/core';
-import { Observable, Subject, interval } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+
+import { Observable, Subject, interval, throwError } from 'rxjs';
+import { catchError, retry } from 'rxjs/operators';
+
+import { WebSocket } from 'ws';
+
 
 @Injectable({
   providedIn: 'root'
@@ -46,11 +52,31 @@ export class ChatService {
 
   execChange: Subject<any> = new Subject<any>();
 
-  constructor() {
+  constructor(private httpClient: HttpClient) {
+    
     const source = interval(3000);
     source.subscribe(val => {
       this.execChange.next(this.generateRandomMessage());
     });
+
+    webSocket({
+      url: "ws://localhost:8080/chat/6fda0ae2-61de-4eb6-b323-efb17856da5e",
+      closeObserver: {
+        next: () => {
+          console.log('[DataService]: connection closed');
+        }
+      }      
+    });
+
+    //new WebSocket();
+
+      // .subscribe(response => {
+
+      //   console.log(JSON.stringify(response));
+
+      //   this.execChange.next(response);
+      // });
+
   }
 
   getContacts(): Observable<Array<any>> {
