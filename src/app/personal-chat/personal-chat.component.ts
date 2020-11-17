@@ -54,12 +54,7 @@ export class PersonalChatComponent implements OnInit {
   addMessageToHistory(findDestinationContactFunction: any, message: any): void {
 
     const destinationContact = findDestinationContactFunction();
-
     
-
-    console.log("found message to contact: " + JSON.stringify(destinationContact));
-    console.log("message: " + JSON.stringify(message));
-
     destinationContact.chatHistory.push(message);
 
     if (destinationContact.id === this.contact.id) {
