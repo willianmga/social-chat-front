@@ -1,3 +1,4 @@
+import { i18nMetaToJSDoc } from '@angular/compiler/src/render3/view/i18n/meta';
 import { Component } from '@angular/core';
 import { Observable } from 'rxjs';
 
@@ -10,19 +11,14 @@ import { ChatService } from './chat.service';
 })
 export class AppComponent {
   
-  message: any;
   loggedInUser: any;
+  availableUsers: Array<any>;
   avatar: Observable<string>;
   title = 'SocialChat';
 
   constructor(private chatService: ChatService) {
-
-    this.chatService.execChange.subscribe((response) => {
-      this.message = response;
-    });
-
     this.getLoggedInUser();
-
+    this.getAvailableUsers();
   }
 
   getLoggedInUser(): void {
@@ -37,6 +33,22 @@ export class AppComponent {
 
         this.loggedInUser = response;
       })
+  }
+
+  getAvailableUsers(): void {
+
+    this.chatService
+      .getContacts()
+      .subscribe(response => {
+        this.availableUsers = response;
+      })
+
+  }
+
+  switchUser(user: any): void {
+    this.chatService.switchUser(user);
+    this.getAvailableUsers();
+    this.getLoggedInUser();
   }
 
 }

@@ -19,7 +19,7 @@ export class PersonalChatComponent implements OnInit {
 
   constructor(private chatService: ChatService) { 
 
-    this.chatService.execChange.subscribe((message) => {
+    this.chatService.messagesSubject.subscribe((message) => {
         this.notifyReceivedMessage(message);
     });
 
@@ -36,7 +36,7 @@ export class PersonalChatComponent implements OnInit {
   notifyReceivedMessage(message: any): void {
 
     this.addMessageToHistory(
-      () => this.contacts.filter(contact => contact.id === message.from.id)[0],
+      () => this.contacts.filter(contact => contact.id === message.from)[0],
       message
     );
 
@@ -45,7 +45,7 @@ export class PersonalChatComponent implements OnInit {
   notifySentMessage(message: any): void {
 
     this.addMessageToHistory(
-      () => this.contacts.filter(contact => contact.id === message.to.id)[0],
+      () => this.contacts.filter(contact => contact.id === message.destination.destinationId)[0],
       message
     );
 
@@ -54,6 +54,11 @@ export class PersonalChatComponent implements OnInit {
   addMessageToHistory(findDestinationContactFunction: any, message: any): void {
 
     const destinationContact = findDestinationContactFunction();
+
+    
+
+    console.log("found message to contact: " + JSON.stringify(destinationContact));
+    console.log("message: " + JSON.stringify(message));
 
     destinationContact.chatHistory.push(message);
 
@@ -64,20 +69,12 @@ export class PersonalChatComponent implements OnInit {
   }
 
   sendMessage(message: string): void {
-
-    const sentMessage = {
-      to: this.contact,
-      from: this.loggedInUser,
-      message: message,
-      date: new Date()
-    };  
-    
+    const sentMessage = this.chatService.sendMessage(message, this.contact);
     this.notifySentMessage(sentMessage);
-
   }
 
   receivedMessage(message: any): boolean {
-    return message.from.id === this.contact.id;
+    return message.from === this.contact.id;
   }
 
   loadContacts(): void {

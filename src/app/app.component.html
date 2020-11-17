@@ -19,6 +19,7 @@
   </button>
   <mat-menu #menu="matMenu">
     <span mat-menu-item>Logged as: {{loggedInUser.name}}</span>
+    <span mat-menu-item *ngFor="let user of availableUsers" (click)="switchUser(user)">Switch to: {{user.name}}</span>
   </mat-menu>
 
 </mat-toolbar>
