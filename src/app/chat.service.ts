@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, Subject, interval, throwError } from 'rxjs';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
+import { environment } from './../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -25,7 +26,7 @@ export class ChatService {
 
   openConnection(): void {
 
-    this.chatServerWebSocket = webSocket(`ws://localhost:8080/chat/${this.loggedInUser.id}`);
+    this.chatServerWebSocket = webSocket(`${environment.backendUrl}/${this.loggedInUser.id}`);
 
     this.chatServerWebSocket.asObservable()
       .subscribe(data => {
