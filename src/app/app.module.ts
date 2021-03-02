@@ -20,15 +20,11 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { PersonalChatComponent } from './personal-chat/personal-chat.component';
-import { SettingsComponent } from './settings/settings.component';
-import { GroupChatComponent } from './group-chat/group-chat.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    PersonalChatComponent,
-    SettingsComponent,
-    GroupChatComponent,
+    PersonalChatComponent
   ],
   imports: [
     BrowserModule,

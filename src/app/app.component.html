@@ -1,8 +1,5 @@
 
 <mat-toolbar color="primary">
-  <button mat-icon-button  (click)="sidenav.toggle()">
-    <mat-icon [inline]="true" style="font-size: 30px;">menu</mat-icon>
-  </button>
   <span>{{title}}</span>
 
   <span class="spacer"></span>
@@ -25,28 +22,7 @@
 </mat-toolbar>
 
 <mat-sidenav-container class="main-sidenav-container" autosize>
-
-  <mat-sidenav #sidenav mode="side" color="primary"  opened [fixedInViewport]="false" [fixedTopGap]="false" [fixedBottomGap]="true">
-    <nav>
-      <mat-selection-list [multiple]="false" style="padding-top: 0px;">
-
-        <mat-list-option routerLink="chat">
-          <mat-icon [inline]="true" style="font-size: 30px;">chat</mat-icon>
-        </mat-list-option>
-
-        <mat-list-option routerLink="groups">
-          <mat-icon [inline]="true" style="font-size: 30px;">group</mat-icon>
-        </mat-list-option>      
-
-        <mat-list-option routerLink="settings"  style="padding: 0px; margin: 0px;">
-          <mat-icon [inline]="true" style="font-size: 30px;">settings</mat-icon>
-        </mat-list-option>          
-      </mat-selection-list>
-    </nav>
-  </mat-sidenav>
-
   <mat-sidenav-content>
     <router-outlet></router-outlet>
   </mat-sidenav-content>
-
 </mat-sidenav-container>

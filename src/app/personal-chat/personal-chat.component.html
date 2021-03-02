@@ -1,72 +1,51 @@
-
-<mat-sidenav-container class="main-sidenav-container" autosize>
-
-    <mat-sidenav #chatsidenav mode="side" class="message-list-container" opened [fixedInViewport]="false" [fixedTopGap]="true" [fixedBottomGap]="true">
-
-        <mat-card  class="message-list-container">
-            <mat-card-header>
-                <div>
-                    <mat-form-field>
-                        <mat-label>Search a contact</mat-label>
-                        <input #searchinput matInput matNativeControl [matAutocomplete]="auto" placeholder="Type the contact name">
-                        <mat-autocomplete #auto="matAutocomplete">
-                            <mat-option *ngFor="let contact of contacts" value="{{contact.name}}">
-                                {{contact.name}}
-                            </mat-option>
-                        </mat-autocomplete>
-                    </mat-form-field>
+<div class="personal-chat-component">
+    
+    <!-- Contacs Area -->
+    <div class="contacts-area">
         
-                    <button mat-icon-button aria-label="Test">
-                        <mat-icon>search</mat-icon>
-                    </button> 
-                </div>
+        <!-- Current User Details -->
+        <mat-card class="selected-contact-card">
+            <mat-card-header>                    
+                <img mat-card-avatar src="{{loggedInUser?.avatar}}"/>        
             </mat-card-header>
         </mat-card>
 
-        <nav>
+        <!-- Lateral Contact List Area -->
+        <nav >
             <mat-selection-list [multiple]="false">
-                <mat-list-option *ngFor="let contact of contacts" (click)="openContact(contact)">
+                <mat-list-option class="contact-option" *ngFor="let contact of contacts" (click)="openContact(contact)">
                     <img mat-list-avatar src="{{contact?.avatar}}"/>
-                    <h1 matLine>{{contact.name}}</h1>
+                    <h1 matLine matLine style="font-weight: bold">{{contact.name}}</h1>
                     <h3 *ngIf="contact.chatHistory.length === 0"  matLine>{{contact.status}}</h3>
                     <h3 *ngIf="contact.chatHistory.length > 0" matLine style="font-weight: bold">{{contact.chatHistory[contact.chatHistory.length - 1]?.payload.content}}</h3>
                     <mat-divider></mat-divider>
                 </mat-list-option>
-                
             </mat-selection-list>  
         </nav>
+    </div>    
 
-    </mat-sidenav>
+    <!-- Chat History Area -->
+    <div class="chat-history-area">
 
-    <mat-sidenav-content class="main-sidenav-content">
-
-        <mat-card class="message-card-container">
-
+        <!-- Selected Contact Details Area -->
+        <mat-card class="selected-contact-card">
             <mat-card-header>                    
-                <img mat-card-avatar src="{{contact?.avatar}}"/>        
-                <mat-card-title>{{contact.name}}</mat-card-title>
-                <mat-card-subtitle>{{contact.status}}</mat-card-subtitle>
+                <img mat-card-avatar src="{{selectedContact?.avatar}}"/>        
+                <mat-card-title>{{selectedContact?.name}}</mat-card-title>
+                <mat-card-subtitle>{{selectedContact?.status}}</mat-card-subtitle>
             </mat-card-header>
+        </mat-card>
 
-            <mat-card-content class="message-area">
+        <!-- Chat History -->
+        <div class="message-area-container">
+            <mat-card class="message-container" *ngFor="let message of selectedContact?.chatHistory">
+                <mat-card-content>{{message.payload.content}}</mat-card-content>
+            </mat-card>
+        </div>
 
-                <div class="message-area-container">
-
-                    <table mat-table [dataSource]="messagesDataSource">
-    
-                        <ng-container matColumnDef="message">
-                            <th mat-header-cell *matHeaderCellDef> Message </th>
-                            <td mat-cell *matCellDef="let element"> {{element.payload.content}} </td>
-                        </ng-container>
-                    
-                        <tr mat-row [style.text-align]="receivedMessage(row) ? 'left' : 'right'" style="color: black;" *matRowDef="let row; columns: displayedColumns;"></tr>
-                    </table>
-    
-                </div>
-
-            </mat-card-content>
+        <!-- Message Typing area -->
+        <mat-card class="type-message-card">
             <mat-card-footer style="padding: 0px 50px;">
-
                 <div class="message-type-area">
                     <mat-form-field hintLabel="Max 280 characters" appearance="fill">
                         <mat-label>Message</mat-label>
@@ -78,11 +57,9 @@
                         <mat-icon [inline]="true" class="mediumIcon">send</mat-icon>
                     </button> 
                 </div>   
-
             </mat-card-footer>
-
         </mat-card>
 
-    </mat-sidenav-content>
+    </div>
 
-</mat-sidenav-container>
+</div>    

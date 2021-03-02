@@ -2,14 +2,10 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router'
 
 import { PersonalChatComponent } from './personal-chat/personal-chat.component';
-import { GroupChatComponent } from './group-chat/group-chat.component';
-import { SettingsComponent } from './settings/settings.component';
 
 const routes: Routes = [
   { path: '', component: PersonalChatComponent },
-  { path: 'chat', component: PersonalChatComponent },
-  { path: 'groups', component: GroupChatComponent },
-  { path: 'settings', component: SettingsComponent }
+  { path: 'chat', component: PersonalChatComponent }
 ];
 
 @NgModule({

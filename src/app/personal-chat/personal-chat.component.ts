@@ -1,6 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { MatTableDataSource } from '@angular/material/table';
-
 import { ChatService } from '../chat.service';
 
 @Component({
@@ -10,27 +8,32 @@ import { ChatService } from '../chat.service';
 })
 export class PersonalChatComponent implements OnInit {
 
-  displayedColumns: string[] = ["message"];
-  messagesDataSource = new MatTableDataSource<any>([]);
-
-  contact: any;
+  selectedContact: any;
   contacts: Array<any>;
   loggedInUser: any;
 
   constructor(private chatService: ChatService) { 
 
+  }
+
+  ngOnInit(): void {
+
+    this.chatService.getLoggedInUser()
+      .subscribe(user => {
+        this.loggedInUser = user;
+      });    
+
+    this.chatService
+      .getContacts()
+      .subscribe((response) => {
+        this.contacts = response;
+        this.selectedContact = this.contacts[0];
+      });
+
     this.chatService.messagesSubject.subscribe((message) => {
         this.notifyReceivedMessage(message);
     });
 
-    this.chatService.getLoggedInUser().subscribe(user => {
-        this.loggedInUser = user;
-    });
-
-  }
-
-  ngOnInit(): void {
-    this.loadContacts();
   }
 
   notifyReceivedMessage(message: any): void {
@@ -56,38 +59,19 @@ export class PersonalChatComponent implements OnInit {
     const destinationContact = findDestinationContactFunction();
     
     destinationContact.chatHistory.push(message);
-
-    if (destinationContact.id === this.contact.id) {
-      this.refreshMessages(); 
-    }
-
   }
 
   sendMessage(message: string): void {
-    const sentMessage = this.chatService.sendMessage(message, this.contact);
+    const sentMessage = this.chatService.sendMessage(message, this.selectedContact);
     this.notifySentMessage(sentMessage);
   }
 
   receivedMessage(message: any): boolean {
-    return message.from === this.contact.id;
-  }
-
-  loadContacts(): void {
-    this.chatService
-      .getContacts()
-      .subscribe((response) => {
-        this.contacts = response;
-        this.contact = this.contacts[0];
-      });
+    return message.from === this.selectedContact.id;
   }
 
   openContact(contact: any): void {
-    this.contact = contact;
-    this.refreshMessages();
-  }
-
-  refreshMessages(): void {
-    this.messagesDataSource.data = this.contact.chatHistory;
+    this.selectedContact = contact;
   }
 
 }

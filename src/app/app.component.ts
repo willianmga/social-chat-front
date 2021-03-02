@@ -1,7 +1,6 @@
 import { i18nMetaToJSDoc } from '@angular/compiler/src/render3/view/i18n/meta';
 import { Component } from '@angular/core';
 import { Observable } from 'rxjs';
-
 import { ChatService } from './chat.service';
 
 @Component({
