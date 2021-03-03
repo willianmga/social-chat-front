@@ -16,7 +16,7 @@
                 <mat-list-option class="contact-option" *ngFor="let contact of contacts" (click)="openContact(contact)">
                     <img mat-list-avatar src="{{contact?.avatar}}"/>
                     <h1 matLine matLine style="font-weight: bold">{{contact.name}}</h1>
-                    <h3 *ngIf="contact.chatHistory.length === 0"  matLine>{{contact.status}}</h3>
+                    <h3 *ngIf="contact.chatHistory.length === 0"  matLine>{{contact.description}}</h3>
                     <h3 *ngIf="contact.chatHistory.length > 0" matLine style="font-weight: bold">{{contact.chatHistory[contact.chatHistory.length - 1]?.payload.content}}</h3>
                     <mat-divider></mat-divider>
                 </mat-list-option>
@@ -38,9 +38,20 @@
 
         <!-- Chat History -->
         <div class="message-area-container">
-            <mat-card class="message-container" *ngFor="let message of selectedContact?.chatHistory">
-                <mat-card-content>{{message.payload.content}}</mat-card-content>
-            </mat-card>
+            <div *ngFor="let message of selectedContact?.chatHistory">
+                <mat-card class="message-container">
+
+                    <p
+                        [style.text-align]="isReceivedMessage(message) ? 'left' : 'right'"  
+                        [style.color]="isReceivedMessage(message) ? 'purple' : 'black'"  
+                        style="margin: 0px;"
+                        *ngIf="isGroupMessage(message) && isReceivedMessage(message)">{{ getSenderName(message) }}</p>
+
+                    <mat-card-content
+                        [style.text-align]="isReceivedMessage(message) ? 'left' : 'right'">{{message.payload.content}}</mat-card-content>
+
+                </mat-card>
+            </div>
         </div>
 
         <!-- Message Typing area -->

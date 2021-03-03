@@ -49,6 +49,22 @@ mat-card {
     border-radius: 2%;
 }
 
+.message-container-received-message {
+    text-align: left; 
+    font-size: small; 
+    color: blueviolet; 
+    font-weight: bold; 
+    margin-left: 0px;
+}
+
+.message-container-sent-message {
+    text-align: left; 
+    font-size: small; 
+    color: green; 
+    font-weight: bold; 
+    margin-left: 0px;
+}
+
 .message-area-container {
     flex: 1;
     min-height: 20px;

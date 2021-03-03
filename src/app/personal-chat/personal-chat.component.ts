@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ViewChild, OnInit } from '@angular/core';
+import { MatInput } from '@angular/material/input';
+import { send } from 'process';
 import { ChatService } from '../chat.service';
 
 @Component({
@@ -12,14 +14,16 @@ export class PersonalChatComponent implements OnInit {
   contacts: Array<any>;
   loggedInUser: any;
 
+  @ViewChild('messageinput') messageinput: MatInput;
+
   constructor(private chatService: ChatService) { 
 
   }
 
   ngOnInit(): void {
 
-    this.chatService.getLoggedInUser()
-      .subscribe(user => {
+    this.chatService.loggedInUserSubject
+      .subscribe((user) => {
         this.loggedInUser = user;
       });    
 
@@ -27,7 +31,7 @@ export class PersonalChatComponent implements OnInit {
       .getContacts()
       .subscribe((response) => {
         this.contacts = response;
-        this.selectedContact = this.contacts[0];
+        this.openContact(this.contacts[0]);
       });
 
     this.chatService.messagesSubject.subscribe((message) => {
@@ -37,37 +41,64 @@ export class PersonalChatComponent implements OnInit {
   }
 
   notifyReceivedMessage(message: any): void {
-
     this.addMessageToHistory(
-      () => this.contacts.filter(contact => contact.id === message.from)[0],
+      () => this.findMessageDestinationContact(message),
       message
     );
-
   }
 
   notifySentMessage(message: any): void {
-
     this.addMessageToHistory(
-      () => this.contacts.filter(contact => contact.id === message.destination.destinationId)[0],
+      () => this.findMessageDestinationContact(message),
       message
     );
+  }
 
+  findMessageDestinationContact(message: any): any {
+    return (message.destination.destinationType == "USER")
+      ? this.findContact(message.from)
+      : this.findContact(message.destination.destinationId);
+  }
+
+  findMessageSenderContact(message: any): any {
+    return (message.from == this.loggedInUser.id)
+      ? this.loggedInUser
+      : this.findContact(message.from);
+  }
+
+  findContact(contactId: String): any {
+    return this.contacts.filter(contact => contact.id == contactId)[0];
   }
 
   addMessageToHistory(findDestinationContactFunction: any, message: any): void {
-
     const destinationContact = findDestinationContactFunction();
-    
     destinationContact.chatHistory.push(message);
   }
 
   sendMessage(message: string): void {
     const sentMessage = this.chatService.sendMessage(message, this.selectedContact);
     this.notifySentMessage(sentMessage);
+    this.messageinput.value = "";
   }
 
-  receivedMessage(message: any): boolean {
-    return message.from === this.selectedContact.id;
+  isReceivedMessage(message: any): boolean {
+    return message.from !== this.loggedInUser.id;
+  }
+
+  isGroupMessage(message: any): boolean {
+    return message.destinationType != "USER";
+  }
+
+  getSenderName(message: any): String {
+    const senderContact = this.findMessageSenderContact(message);
+
+    if (senderContact !== undefined) {
+      return (senderContact.id == this.loggedInUser.id)
+        ? "You"
+        : senderContact.name;
+    }
+
+    return "";
   }
 
   openContact(contact: any): void {
