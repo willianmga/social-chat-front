@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  backendUrl: "ws://localhost:8080/chat"
+  backendUrl: "ws://reactive-chat-back.herokuapp.com/chat"
 };
