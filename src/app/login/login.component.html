@@ -1,0 +1,33 @@
+
+<mat-card style="width: 25%; min-width: 300px; margin: auto; margin-top: 20px;">
+    <p style="text-align: center;">Login</p>
+    <mat-card-content>
+
+        <p>
+            <mat-form-field appearance="fill" style="width: 100%;">
+                <mat-label>Username</mat-label>
+                <input #usernameInput matInput matNativeControl placeholder="Type your username">
+            </mat-form-field>
+        </p>
+
+        <p>
+            <mat-form-field appearance="fill" style="width: 100%;">
+                <mat-label>Password</mat-label>
+                <input #passwordInput matInput [type]="hide ? 'password' : 'text'" placeholder="Type your password">
+                
+                <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
+                    <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+                </button>
+
+            </mat-form-field>        
+        </p>
+
+    </mat-card-content>
+    <mat-card-footer>
+        <p>
+            <button mat-raised-button color="accent" (click)="login(usernameInput.value, passwordInput.value)" style="margin-left: 20px;">
+                Login
+            </button> 
+        </p>
+    </mat-card-footer>
+</mat-card>
