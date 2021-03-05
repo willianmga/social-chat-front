@@ -34,7 +34,7 @@ export class AppComponent {
 
   }
 
-  checkValidSession(): Observable<void> {
+  checkValidSession(): Observable<SessionDetails> {
     return new Observable((observer) => {
       this.chatService
         .getSessionDetailsObservable()
@@ -43,7 +43,7 @@ export class AppComponent {
             this.router.navigate(['/login']);
             observer.error(new Error('not logged in'));
           }
-          observer.next();
+          observer.next(sessionDetails);
           observer.complete();
         });
     });
@@ -65,9 +65,10 @@ export class AppComponent {
 
           this.registerSession(sessionDetails);
 
-        } else {
-          this.chatService.deregisterSession();
         }
+        // } else {
+        //   this.chatService.deregisterSession();
+        // }
 
       });
 
@@ -88,16 +89,17 @@ export class AppComponent {
           };
 
           this.registerSession(sessionDetails);
-        } else {
-          this.chatService.deregisterSession();
-        }
+      }
+        // } else {
+        //   this.chatService.deregisterSession();
+        // }
 
       });
 
   }
 
   logout(): void {
-    this.chatService.deregisterSession();
+    this.chatService.logoff();
     this.checkLoggedIn();
   }
 

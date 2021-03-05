@@ -14,6 +14,7 @@ export enum MessageType {
   CONNECTED = 'CONNECTED',
   DISCONNECTED = 'DISCONNECTED',
   AUTHENTICATE = 'AUTHENTICATE',
+  REAUTHENTICATE = 'REAUTHENTICATE',
   SIGNUP = 'SIGNUP',
   LOGOFF = 'LOGOFF',
   NOT_AUTHENTICATED = 'NOT_AUTHENTICATED',
@@ -119,32 +120,19 @@ const SESSION_KEY = 'session';
 })
 export class ChatService {
 
-  sessionDetails: SessionDetails;
-  chatServerWebSocket: WebSocketSubject<any>;
-  messagesSubject: Subject<any> = new Subject<any>();
-  contactsSubject: Subject<Array<any>> = new Subject<Array<any>>();
-  sessionDetailsSubject: Subject<SessionDetails> = new Subject<SessionDetails>();
-  loginSubject: Subject<LoginResponse> = new Subject();
-  signupSubject: Subject<SignupResponse> = new Subject();
-  localStorage: Storage;
+  private chatServerWebSocket: WebSocketSubject<any>;
+  private contactsSubject: Subject<Array<any>> = new Subject<Array<any>>();
+  private sessionDetailsSubject: Subject<SessionDetails> = new Subject<SessionDetails>();
+  private loginSubject: Subject<LoginResponse> = new Subject();
+  private signupSubject: Subject<SignupResponse> = new Subject();
+  private messagesSubject: Subject<ChatMessage> = new Subject<ChatMessage>();
+  private sessionDetails: SessionDetails;
+  private localStorage: Storage;
 
   constructor(private router: Router) {
     this.localStorage = window.localStorage;
     this.loadSession();
     this.openWebSocketConnection();
-  }
-
-  loadSession(): void {
-
-    const sessionJson: string = this.localStorage.getItem('session');
-
-    if (sessionJson !== undefined) {
-      this.sessionDetails = JSON.parse(sessionJson);
-    } else {
-      this.sessionDetails = loggedOffSessionDetails;
-    }
-
-    this.sessionDetailsSubject.next(this.sessionDetails);
   }
 
   openWebSocketConnection(): void {
@@ -180,8 +168,35 @@ export class ChatService {
         console.error(error);
       });
 
+    if (this.sessionDetails?.token !== undefined) {
+      this.restoreSession();
+    }
+
     this.playPingPong();
 
+  }
+
+  loadSession(): void {
+
+    const sessionJson: string = this.localStorage.getItem(SESSION_KEY);
+
+    this.sessionDetails = (sessionJson !== undefined)
+      ? JSON.parse(sessionJson)
+      : loggedOffSessionDetails;
+
+    this.sessionDetailsSubject.next(this.sessionDetails);
+  }
+
+  restoreSession(): void {
+
+    const restoreSessionRequest: RequestMessage = {
+      type: MessageType.REAUTHENTICATE,
+      payload: {
+        token: this.sessionDetails.token
+      }
+    };
+
+    this.chatServerWebSocket.next(restoreSessionRequest);
   }
 
   playPingPong(): void {
@@ -260,6 +275,12 @@ export class ChatService {
     this.sessionDetailsSubject.next(this.sessionDetails);
   }
 
+  logoff(): void {
+    this.deregisterSession();
+    this.closeWebsocketConnection();
+    this.openWebSocketConnection();
+  }
+
   deregisterSession(): void {
     this.chatServerWebSocket.next(logoffMessage);
     this.sessionDetails = loggedOffSessionDetails;
@@ -281,7 +302,12 @@ export class ChatService {
     });
   }
 
+  getMessagesObservable(): Observable<ChatMessage> {
+    return this.messagesSubject;
+  }
+
   private unauthorizedOrClosed(): void {
+    alert('unauthorized');
     this.deregisterSession();
     this.router.navigate(['/login']);
   }

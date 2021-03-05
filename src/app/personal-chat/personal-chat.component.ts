@@ -1,6 +1,7 @@
 import {AfterViewChecked, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {ChatMessage, ChatService, Contact, DestinationType, SessionDetails} from '../chat.service';
 import {AppComponent} from '../app.component';
+import {Howl, Howler} from 'howler';
 
 @Component({
   selector: 'app-personal-chat',
@@ -12,23 +13,24 @@ export class PersonalChatComponent implements OnInit, AfterViewChecked {
   sessionDetails: SessionDetails;
   selectedContact: Contact;
   contacts: Array<Contact> = [];
+  private player: Howl;
 
   @ViewChild('messageinput') messageinput;
   @ViewChild('chatHistoryContainer') private chatHistoryContainer: ElementRef;
 
-  constructor(private chatService: ChatService, private appComponent: AppComponent) {}
+  constructor(private chatService: ChatService, private appComponent: AppComponent) {
+    this.player = new Howl({
+        src: ['../../assets/notification.mp3']
+      });
+  }
 
   ngOnInit(): void {
 
     this.appComponent
       .checkValidSession()
-      .subscribe(() => {
+      .subscribe((sessionDetails) => {
 
-        this.chatService
-          .getSessionDetailsObservable()
-          .subscribe((session) => {
-            this.sessionDetails = session;
-          });
+        this.sessionDetails = sessionDetails;
 
         this.chatService
           .requestContacts()
@@ -37,9 +39,12 @@ export class PersonalChatComponent implements OnInit, AfterViewChecked {
             this.openContact(this.contacts[0]);
           });
 
-        this.chatService.messagesSubject.subscribe((message) => {
-          this.notifyReceivedMessage(message);
-        });
+        this.chatService
+          .getMessagesObservable()
+          .subscribe((message) => {
+
+            this.notifyReceivedMessage(message);
+          });
 
       });
 
@@ -54,6 +59,7 @@ export class PersonalChatComponent implements OnInit, AfterViewChecked {
       () => this.findMessageDestinationContact(message),
       message
     );
+    this.player.play();
   }
 
   notifySentMessage(message: ChatMessage): void {
@@ -85,11 +91,13 @@ export class PersonalChatComponent implements OnInit, AfterViewChecked {
   }
 
   sendMessage(message: string): void {
-    const sentMessage: ChatMessage = this.chatService.sendMessage(message, this.selectedContact);
-    this.notifySentMessage(sentMessage);
-    this.messageinput.nativeElement.value = '';
-    this.messageinput.nativeElement.focus();
-    this.scrollToBottom();
+    if (message !== undefined && message !== '') {
+      const sentMessage: ChatMessage = this.chatService.sendMessage(message, this.selectedContact);
+      this.notifySentMessage(sentMessage);
+      this.messageinput.nativeElement.value = '';
+      this.messageinput.nativeElement.focus();
+      this.scrollToBottom();
+    }
   }
 
   scrollToBottom(): void {
