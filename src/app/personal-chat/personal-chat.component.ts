@@ -1,6 +1,5 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
-import {MatInput} from '@angular/material/input';
-import {ChatMessage, ChatService, Contact, DestinationType, SessionDetails, User} from '../chat.service';
+import {AfterViewChecked, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {ChatMessage, ChatService, Contact, DestinationType, SessionDetails} from '../chat.service';
 import {AppComponent} from '../app.component';
 
 @Component({
@@ -8,13 +7,15 @@ import {AppComponent} from '../app.component';
   templateUrl: './personal-chat.component.html',
   styleUrls: ['./personal-chat.component.css']
 })
-export class PersonalChatComponent implements OnInit {
+export class PersonalChatComponent implements OnInit, AfterViewChecked {
 
   sessionDetails: SessionDetails;
   selectedContact: Contact;
   contacts: Array<Contact> = [];
 
-  @ViewChild('messageinput') messageinput: MatInput;
+  @ViewChild('messageinput') messageinput;
+  @ViewChild('chatHistoryContainer') private chatHistoryContainer: ElementRef;
+
   constructor(private chatService: ChatService, private appComponent: AppComponent) {}
 
   ngOnInit(): void {
@@ -42,6 +43,10 @@ export class PersonalChatComponent implements OnInit {
 
       });
 
+  }
+
+  ngAfterViewChecked(): void {
+    this.scrollToBottom();
   }
 
   notifyReceivedMessage(message: ChatMessage): void {
@@ -82,7 +87,15 @@ export class PersonalChatComponent implements OnInit {
   sendMessage(message: string): void {
     const sentMessage: ChatMessage = this.chatService.sendMessage(message, this.selectedContact);
     this.notifySentMessage(sentMessage);
-    this.messageinput.value = '';
+    this.messageinput.nativeElement.value = '';
+    this.messageinput.nativeElement.focus();
+    this.scrollToBottom();
+  }
+
+  scrollToBottom(): void {
+    try {
+      this.chatHistoryContainer.nativeElement.scrollTop = this.chatHistoryContainer.nativeElement.scrollHeight;
+    } catch (err) {}
   }
 
   isReceivedMessage(message: ChatMessage): boolean {

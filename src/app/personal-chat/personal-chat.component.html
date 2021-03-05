@@ -37,7 +37,7 @@
         </mat-card>
 
         <!-- Chat History -->
-        <div class="message-area-container">
+        <div #chatHistoryContainer class="message-area-container">
             <div *ngFor="let chatMessage of selectedContact?.chatHistory">
                 <mat-card class="message-container">
 
@@ -60,7 +60,7 @@
                 <div class="message-type-area">
                     <mat-form-field hintLabel="Max 280 characters" appearance="fill">
                         <mat-label>Message</mat-label>
-                        <input #messageinput matInput matNativeControl maxlength="280" placeholder="Type your message">
+                        <input #messageinput matInput matNativeControl  (keyup.enter)="sendMessage(messageinput.value)" maxlength="280" placeholder="Type your message">
                         <mat-hint align="end">{{ messageinput.value?.length || 0 }}/280</mat-hint>
                     </mat-form-field>
 
