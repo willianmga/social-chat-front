@@ -1,12 +1,12 @@
 <div class="personal-chat-component">
-    
+
     <!-- Contacs Area -->
     <div class="contacts-area">
-        
+
         <!-- Current User Details -->
         <mat-card class="selected-contact-card">
-            <mat-card-header>                    
-                <img mat-card-avatar src="{{loggedInUser?.avatar}}"/>        
+            <mat-card-header>
+                <img mat-card-avatar src="{{ sessionDetails?.loggedInUser?.avatar}}"/>
             </mat-card-header>
         </mat-card>
 
@@ -17,38 +17,38 @@
                     <img mat-list-avatar src="{{contact?.avatar}}"/>
                     <h1 matLine matLine style="font-weight: bold">{{contact.name}}</h1>
                     <h3 *ngIf="contact.chatHistory.length === 0"  matLine>{{contact.description}}</h3>
-                    <h3 *ngIf="contact.chatHistory.length > 0" matLine style="font-weight: bold">{{contact.chatHistory[contact.chatHistory.length - 1]?.payload.content}}</h3>
+                    <h3 *ngIf="contact.chatHistory.length > 0" matLine style="font-weight: bold">{{contact.chatHistory[contact.chatHistory.length - 1]?.message}}</h3>
                     <mat-divider></mat-divider>
                 </mat-list-option>
-            </mat-selection-list>  
+            </mat-selection-list>
         </nav>
-    </div>    
+    </div>
 
     <!-- Chat History Area -->
     <div class="chat-history-area">
 
         <!-- Selected Contact Details Area -->
         <mat-card class="selected-contact-card">
-            <mat-card-header>                    
-                <img mat-card-avatar src="{{selectedContact?.avatar}}"/>        
+            <mat-card-header>
+                <img mat-card-avatar src="{{selectedContact?.avatar}}"/>
                 <mat-card-title>{{selectedContact?.name}}</mat-card-title>
-                <mat-card-subtitle>{{selectedContact?.status}}</mat-card-subtitle>
+                <mat-card-subtitle>{{selectedContact?.description}}</mat-card-subtitle>
             </mat-card-header>
         </mat-card>
 
         <!-- Chat History -->
         <div class="message-area-container">
-            <div *ngFor="let message of selectedContact?.chatHistory">
+            <div *ngFor="let chatMessage of selectedContact?.chatHistory">
                 <mat-card class="message-container">
 
                     <p
-                        [style.text-align]="isReceivedMessage(message) ? 'left' : 'right'"  
-                        [style.color]="isReceivedMessage(message) ? 'purple' : 'black'"  
+                        [style.text-align]="isReceivedMessage(chatMessage) ? 'left' : 'right'"
+                        [style.color]="isReceivedMessage(chatMessage) ? 'purple' : 'black'"
                         style="margin: 0px;"
-                        *ngIf="isGroupMessage(message) && isReceivedMessage(message)">{{ getSenderName(message) }}</p>
+                        *ngIf="isGroupMessage(chatMessage) && isReceivedMessage(chatMessage)">{{ getSenderName(chatMessage) }}</p>
 
                     <mat-card-content
-                        [style.text-align]="isReceivedMessage(message) ? 'left' : 'right'">{{message.payload.content}}</mat-card-content>
+                        [style.text-align]="isReceivedMessage(chatMessage) ? 'left' : 'right'">{{chatMessage.message}}</mat-card-content>
 
                 </mat-card>
             </div>
@@ -63,14 +63,14 @@
                         <input #messageinput matInput matNativeControl maxlength="280" placeholder="Type your message">
                         <mat-hint align="end">{{ messageinput.value?.length || 0 }}/280</mat-hint>
                     </mat-form-field>
-        
+
                     <button mat-icon-button (click)="sendMessage(messageinput.value)" style="margin-left: 20px;">
                         <mat-icon [inline]="true" class="mediumIcon">send</mat-icon>
-                    </button> 
-                </div>   
+                    </button>
+                </div>
             </mat-card-footer>
         </mat-card>
 
     </div>
 
-</div>    
+</div>

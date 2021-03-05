@@ -1,6 +1,7 @@
-import { Component, ViewChild, OnInit } from '@angular/core';
-import { MatInput } from '@angular/material/input';
-import { ChatService } from '../chat.service';
+import {Component, OnInit, ViewChild} from '@angular/core';
+import {MatInput} from '@angular/material/input';
+import {ChatMessage, ChatService, Contact, DestinationType, SessionDetails, User} from '../chat.service';
+import {AppComponent} from '../app.component';
 
 @Component({
   selector: 'app-personal-chat',
@@ -9,98 +10,102 @@ import { ChatService } from '../chat.service';
 })
 export class PersonalChatComponent implements OnInit {
 
-  selectedContact: any;
-  contacts: Array<any>;
-  loggedInUser: any;
+  sessionDetails: SessionDetails;
+  selectedContact: Contact;
+  contacts: Array<Contact> = [];
 
   @ViewChild('messageinput') messageinput: MatInput;
-
-  constructor(private chatService: ChatService) { 
-
-  }
+  constructor(private chatService: ChatService, private appComponent: AppComponent) {}
 
   ngOnInit(): void {
 
-    this.chatService.loggedInUserSubject
-      .subscribe((user) => {
-        this.loggedInUser = user;
-      });    
+    this.appComponent
+      .checkValidSession()
+      .subscribe(() => {
 
-    this.chatService
-      .getContacts()
-      .subscribe((response) => {
-        this.contacts = response;
-        this.openContact(this.contacts[0]);
+        this.chatService
+          .getSessionDetailsObservable()
+          .subscribe((session) => {
+            this.sessionDetails = session;
+          });
+
+        this.chatService
+          .requestContacts()
+          .subscribe((response) => {
+            response.forEach(contact => this.contacts.push(contact));
+            this.openContact(this.contacts[0]);
+          });
+
+        this.chatService.messagesSubject.subscribe((message) => {
+          this.notifyReceivedMessage(message);
+        });
+
       });
 
-    this.chatService.messagesSubject.subscribe((message) => {
-        this.notifyReceivedMessage(message);
-    });
-
   }
 
-  notifyReceivedMessage(message: any): void {
+  notifyReceivedMessage(message: ChatMessage): void {
     this.addMessageToHistory(
       () => this.findMessageDestinationContact(message),
       message
     );
   }
 
-  notifySentMessage(message: any): void {
+  notifySentMessage(message: ChatMessage): void {
     this.addMessageToHistory(
       () => this.findMessageDestinationContact(message),
       message
     );
   }
 
-  findMessageDestinationContact(message: any): any {
-    return (message.destination.destinationType == "USER")
+  findMessageDestinationContact(message: ChatMessage): Contact {
+    return (message.destinationType === DestinationType.USER)
       ? this.findContact(message.from)
-      : this.findContact(message.destination.destinationId);
+      : this.findContact(message.destinationId);
   }
 
-  findMessageSenderContact(message: any): any {
-    return (message.from == this.loggedInUser.id)
-      ? this.loggedInUser
+  findMessageSenderContact(message: ChatMessage): Contact {
+    return (message.from === this.sessionDetails?.loggedInUser?.id)
+      ? this.sessionDetails?.loggedInUser?.id
       : this.findContact(message.from);
   }
 
-  findContact(contactId: String): any {
-    return this.contacts.filter(contact => contact.id == contactId)[0];
+  findContact(contactId: string): Contact {
+    return this.contacts.filter(contact => contact.id === contactId)[0];
   }
 
-  addMessageToHistory(findDestinationContactFunction: any, message: any): void {
-    const destinationContact = findDestinationContactFunction();
+  addMessageToHistory(findDestinationContactFunction: any, message: ChatMessage): void {
+    const destinationContact: Contact = findDestinationContactFunction();
     destinationContact.chatHistory.push(message);
   }
 
   sendMessage(message: string): void {
-    const sentMessage = this.chatService.sendMessage(message, this.selectedContact);
+    const sentMessage: ChatMessage = this.chatService.sendMessage(message, this.selectedContact);
     this.notifySentMessage(sentMessage);
-    this.messageinput.value = "";
+    this.messageinput.value = '';
   }
 
-  isReceivedMessage(message: any): boolean {
-    return message.from !== this.loggedInUser.id;
+  isReceivedMessage(message: ChatMessage): boolean {
+    return message.from !== this.sessionDetails?.loggedInUser?.id;
   }
 
-  isGroupMessage(message: any): boolean {
-    return message.destinationType != "USER";
+  isGroupMessage(message: ChatMessage): boolean {
+    return message.destinationType !== DestinationType.USER;
   }
 
-  getSenderName(message: any): String {
-    const senderContact = this.findMessageSenderContact(message);
+  getSenderName(message: ChatMessage): string {
+    const senderContact: Contact = this.findMessageSenderContact(message);
 
     if (senderContact !== undefined) {
-      return (senderContact.id == this.loggedInUser.id)
-        ? "You"
+      return (senderContact.id === this.sessionDetails?.loggedInUser?.id)
+        ? 'You'
         : senderContact.name;
     }
 
-    return "";
+    return '';
   }
 
-  openContact(contact: any): void {
+  openContact(contact: Contact): void {
     this.selectedContact = contact;
   }
 

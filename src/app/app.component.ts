@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
-import { Observable } from 'rxjs';
-import { ChatService, SessionDetails } from './chat.service';
+import {Component} from '@angular/core';
+import {ChatService, Contact, ContactType, LoginRequest, ResponseStatus, SessionDetails, User} from './chat.service';
+import {Router} from '@angular/router';
+import {Observable} from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -8,59 +9,120 @@ import { ChatService, SessionDetails } from './chat.service';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  
-  loggedInUser: any;
+
   sessionDetails: SessionDetails;
-  availableUsers: Array<any>;
-  avatar: Observable<string>;
+  availableUsers: Array<Contact>;
   title = 'SocialChat';
 
-  constructor(private chatService: ChatService) {
-    this.loadSessionDetails();
-    this.getLoggedInUser();
-    this.getAvailableUsers();
+  constructor(private chatService: ChatService, private router: Router) {
+    this.checkLoggedIn();
   }
 
-  getLoggedInUser(): void {
-    this.chatService
-      .getLoggedInUser()
-      .subscribe((response) => {
-        
-        this.avatar = Observable.create(observer => {
-          observer.next(response.avatar);
-          observer.complete();
-        })
+  checkLoggedIn(): void {
 
-        this.loggedInUser = response;
-      })
+    this.chatService
+      .getSessionDetailsObservable()
+      .subscribe(sessionDetails => {
+        this.sessionDetails = sessionDetails;
+        if (sessionDetails?.loggedIn) {
+          this.getAvailableUsers();
+          this.router.navigate(['/chat']);
+        } else {
+          this.router.navigate(['/login']);
+        }
+      });
+
+  }
+
+  checkValidSession(): Observable<void> {
+    return new Observable((observer) => {
+      this.chatService
+        .getSessionDetailsObservable()
+        .subscribe(sessionDetails => {
+          if (!sessionDetails.loggedIn) {
+            this.router.navigate(['/login']);
+            observer.error(new Error('not logged in'));
+          }
+          observer.next();
+          observer.complete();
+        });
+    });
+  }
+
+  login(loginRequest: LoginRequest): void {
+
+    this.chatService
+      .login(loginRequest)
+      .subscribe(loginResponse => {
+
+        if (loginResponse.status === ResponseStatus.SUCCESS) {
+
+          const sessionDetails: SessionDetails = {
+            loggedIn: true,
+            token: loginResponse.token,
+            loggedInUser: loginResponse.user
+          };
+
+          this.registerSession(sessionDetails);
+
+        } else {
+          this.chatService.deregisterSession();
+        }
+
+      });
+
+  }
+
+  signup(name: string, username: string): void {
+
+    this.chatService
+      .signup(name, username)
+      .subscribe((signupResponse) => {
+
+        if (signupResponse.status === ResponseStatus.SUCCESS) {
+
+          const sessionDetails: SessionDetails = {
+            loggedIn: true,
+            token: signupResponse.token,
+            loggedInUser: signupResponse.user
+          };
+
+          this.registerSession(sessionDetails);
+        } else {
+          this.chatService.deregisterSession();
+        }
+
+      });
+
+  }
+
+  logout(): void {
+    this.chatService.deregisterSession();
+    this.checkLoggedIn();
   }
 
   getAvailableUsers(): void {
-
     this.chatService
-      .getContacts()
+      .getContactsObservable()
       .subscribe(response => {
-        this.availableUsers = response;
-      })
-
+        this.availableUsers = response
+          .filter(contact => contact.contactType !== ContactType.GROUP);
+      });
   }
 
-  loadSessionDetails(): void {
-    this.chatService
-      .getSessionDetails()
-      .subscribe(session => {
-        this.sessionDetails = session;
-      })
-  }
-
-  switchUser(user: any): void {
-    this.chatService.switchUser(user);
-    this.getAvailableUsers();
-    this.getLoggedInUser();
-  }
-
-  isLoggedIn() {
+  isLoggedIn(): boolean {
     return this.sessionDetails?.loggedIn;
+  }
+
+  private registerSession(sessionDetails: SessionDetails): void {
+    this.chatService.registerSession(sessionDetails);
+    this.chatService
+      .getSessionDetailsObservable()
+      .toPromise()
+      .then(sessionDetails => {
+        this.sessionDetails = sessionDetails;
+        this.router.navigate(['/chat']);
+      });
   }
 
 }

@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ChatService, LoginRequest } from '../chat.service';
+import {AppComponent} from '../app.component';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -10,27 +12,23 @@ export class LoginComponent implements OnInit {
 
   hide = true;
 
-  constructor(private chatService: ChatService) { }
+  constructor(private chatService: ChatService, private router: Router, private appComponent: AppComponent) { }
 
   ngOnInit(): void {
   }
 
-  login(username: String, password: String): void {
-    
+  login(username: string, password: string): void {
+
     const loginRequest: LoginRequest = {
-      username: username,
-      passowrd: password
-    }
+      username,
+      password
+    };
 
-    this.chatService
-      .login(loginRequest)
-      .subscribe(loginResponse => {
+    this.appComponent.login(loginRequest);
+  }
 
-        console.log("user logged in");
-        console.log(loginResponse);
-
-      });
-    
+  signup(): void {
+    this.router.navigate(['/signup']);
   }
 
 }

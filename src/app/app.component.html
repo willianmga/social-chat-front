@@ -16,11 +16,11 @@
 
   <!-- Switch User Button -->
   <button mat-icon-button  *ngIf="isLoggedIn()" [matMenuTriggerFor]="menu">
-    <img mat-card-avatar src="{{avatar | async }}"/>
+    <img mat-card-avatar src="{{ sessionDetails?.loggedInUser?.avatar }}"/>
   </button>
   <mat-menu #menu="matMenu">
-    <span mat-menu-item>Logged as: {{loggedInUser.name}}</span>
-    <span mat-menu-item *ngFor="let user of availableUsers" (click)="switchUser(user)">Switch to: {{user.name}}</span>
+    <span mat-menu-item>Logged as: {{sessionDetails?.loggedInUser?.name}}</span>
+    <span mat-menu-item (click)="logout()">Logout</span>
   </mat-menu>
 
 </mat-toolbar>
