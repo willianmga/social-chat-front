@@ -1,33 +1,31 @@
+<div class="container">
+  <nav>
+    <!-- Toolbar Section -->
+    <mat-toolbar color="primary">
+      <span>{{title}}</span>
+      <span class="spacer"></span>
 
-<!-- Toolbar Section -->
-<mat-toolbar color="primary">
+      <!-- Notifications Button -->
+      <button mat-icon-button *ngIf="isLoggedIn()" [matMenuTriggerFor]="notification" style="margin-right: 10px;">
+        <mat-icon [inline]="true" style="font-size: 30px;">notifications_active</mat-icon>
+      </button>
+      <mat-menu #notification="matMenu">
+        <span mat-menu-item>No notifications to show</span>
+      </mat-menu>
 
-  <span>{{title}}</span>
+      <!-- Switch User Button -->
+      <button mat-icon-button  *ngIf="isLoggedIn()" [matMenuTriggerFor]="menu">
+        <img mat-card-avatar src="{{ sessionDetails?.loggedInUser?.avatar }}"/>
+      </button>
+      <mat-menu #menu="matMenu">
+        <span mat-menu-item>Logged as: {{sessionDetails?.loggedInUser?.name}}</span>
+        <span mat-menu-item (click)="showSystemInfo()">System info</span>
+        <span mat-menu-item (click)="logout()">Logout</span>
+      </mat-menu>
 
-  <span class="spacer"></span>
-
-  <!-- Notifications Button -->
-  <button mat-icon-button *ngIf="isLoggedIn()" [matMenuTriggerFor]="notification" style="margin-right: 10px;">
-    <mat-icon [inline]="true" style="font-size: 30px;">notifications_active</mat-icon>
-  </button>
-  <mat-menu #notification="matMenu">
-    <span mat-menu-item>No notifications to show</span>
-  </mat-menu>
-
-  <!-- Switch User Button -->
-  <button mat-icon-button  *ngIf="isLoggedIn()" [matMenuTriggerFor]="menu">
-    <img mat-card-avatar src="{{ sessionDetails?.loggedInUser?.avatar }}"/>
-  </button>
-  <mat-menu #menu="matMenu">
-    <span mat-menu-item>Logged as: {{sessionDetails?.loggedInUser?.name}}</span>
-    <span mat-menu-item (click)="showSystemInfo()">System info</span>
-    <span mat-menu-item (click)="logout()">Logout</span>
-  </mat-menu>
-
-</mat-toolbar>
-
-<mat-sidenav-container class="main-sidenav-container" autosize>
-  <mat-sidenav-content>
+    </mat-toolbar>
+  </nav>
+  <main>
     <router-outlet></router-outlet>
-  </mat-sidenav-content>
-</mat-sidenav-container>
+  </main>
+</div>

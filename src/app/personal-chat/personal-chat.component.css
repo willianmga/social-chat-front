@@ -89,3 +89,23 @@ table {
 .mediumIcon {
     font-size: 35px;
 }
+
+@media screen and (max-width: 414px) {
+
+  .personal-chat-component {
+    width: 100%;
+  }
+
+  .contacts-area {
+    width: 100%;
+  }
+
+  .chat-history-area {
+    width: 100%;
+  }
+
+  .type-message-card {
+    width: 100%;
+  }
+
+}

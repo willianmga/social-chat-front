@@ -1,0 +1,94 @@
+mat-card {
+  border-radius: 0%;
+}
+
+.main-container {
+  display: grid;
+  height: 100vh;
+  grid-template-columns: 1fr;
+  grid-template-rows: 0.1fr 0.9fr;
+  grid-template-areas:
+    "contacts-area"
+    "chat-history-area";
+}
+
+.contacts-area {
+  grid-area: contacts-area;
+  height: 100vh;
+  background-color: white;
+  color: black;
+}
+
+.chat-history-area {
+  background: #CED0CE;
+  grid-area: chat-history-area;
+  height: 100%;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 0.3fr 0.9fr;
+  grid-template-areas:
+    "contact-details-container"
+    "message-history-container";
+}
+
+.contact-details-container {
+  grid-area: contact-details-container;
+}
+
+.message-history-container {
+  grid-area: message-history-container;
+  flex: 1;
+  min-height: 20px;
+  overflow: auto;
+}
+
+.contact-option {
+  color: black;
+}
+
+.selected-contact-card {
+  height: 5%;
+}
+
+.type-message-card {
+  width: 80%;
+  margin: auto;
+  margin-bottom: 10px;
+  margin-top: 10px;
+}
+
+.message-container {
+  background-color: white;
+  color: black;
+  margin: auto;
+  width: 80%;
+  margin-top: 4px;
+  border-radius: 2%;
+}
+
+.message-container-received-message {
+  text-align: left;
+  font-size: small;
+  color: blueviolet;
+  font-weight: bold;
+  margin-left: 0px;
+}
+
+.message-container-sent-message {
+  text-align: left;
+  font-size: small;
+  color: green;
+  font-weight: bold;
+  margin-left: 0px;
+}
+
+
+
+
+.message-type-area mat-form-field {
+  width: 90%;
+}
+
+.mediumIcon {
+  font-size: 35px;
+}

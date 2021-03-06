@@ -1,22 +1,32 @@
-.main-sidenav-container {
-    width: auto;
-    height: 93.2%;  
-    align-items: center;
-    justify-content: center;    
+.container {
+  display: grid;
+  height: 100vh;
+  background: var(--background-color);
+  grid-template-columns: 1fr;
+  grid-template-rows: 0.1fr 0.9fr;
+  grid-template-areas:
+    "nav"
+    "main";
 }
-  
-.main-sidenav-content {
-    display: flex; 
-    width: auto;
-    height: 93.2%;
-    align-items: center;
-    justify-content: center;
+
+nav {
+  grid-area: nav;
+  height: 8vh;
+
+}
+
+main {
+  grid-area: main;
+  height: 92vh;
 }
 
 .spacer {
     flex: 1 1 auto;
 }
 
-.mediumIcon {
-    font-size: 100px;
+@media screen and (max-width: var(--mobile-max-width-size)) {
+  .header {
+    display: none;
+    height: 1vh;
+  }
 }

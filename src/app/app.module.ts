@@ -24,6 +24,7 @@ import { LoginComponent } from './login/login.component';
 import { SignupComponent } from './signup/signup.component';
 import { SystemInfoComponent } from './system-info/system-info.component';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import { ChatMobileComponent } from './chat-mobile/chat-mobile.component';
 
 @NgModule({
   declarations: [
@@ -31,7 +32,8 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
     PersonalChatComponent,
     LoginComponent,
     SignupComponent,
-    SystemInfoComponent
+    SystemInfoComponent,
+    ChatMobileComponent
   ],
   imports: [
     BrowserModule,
