@@ -2,7 +2,8 @@
 
 ## Script for automating deployment of app to github pages
 
-export APPNAME=reactive-chat-front
+export APP_NAME="reactive-chat-front"
+export BASE_HREF="/${APP_NAME}/"
 
 # get the latest version
 git checkout master
@@ -18,7 +19,7 @@ git push origin $newVersion
 # Packages source code
 git checkout gb-pages-release
 git pull --rebase origin master
-ng build --prod
+ng build --prod --base-href $BASE_HREF
 docker build -t $APPNAME:latest .
 
 # commits changes to release branch
