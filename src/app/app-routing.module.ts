@@ -1,13 +1,12 @@
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router'
-import { LoginComponent } from './login/login.component';
-import { PersonalChatComponent } from './personal-chat/personal-chat.component';
-import {AppComponent} from './app.component';
+import {NgModule} from '@angular/core';
+import {RouterModule, Routes} from '@angular/router';
+import {LoginComponent} from './login/login.component';
+import {PersonalChatComponent} from './personal-chat/personal-chat.component';
 import {SignupComponent} from './signup/signup.component';
 import {AuthGuardService} from './service/auth-guard.service';
 
 const routes: Routes = [
-  { path: '', component: AppComponent },
+  { path: '', component: PersonalChatComponent },
   { path: 'login', component: LoginComponent },
   { path: 'signup', component: SignupComponent },
   { path: 'chat', component: PersonalChatComponent, canActivate: [AuthGuardService] }
