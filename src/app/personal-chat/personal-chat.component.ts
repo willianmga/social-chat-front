@@ -21,7 +21,7 @@ export class PersonalChatComponent implements OnInit, AfterViewChecked {
 
   constructor(private chatService: ChatService, private appComponent: AppComponent) {
     this.player = new Howl({
-        src: ['../../assets/notification.mp3']
+        src: ['assets/notification.mp3']
       });
   }
 

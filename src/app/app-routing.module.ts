@@ -6,7 +6,7 @@ import {SignupComponent} from './signup/signup.component';
 import {AuthGuardService} from './service/auth-guard.service';
 
 const routes: Routes = [
-  { path: '', component: PersonalChatComponent },
+  { path: '', redirectTo: '/chat', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
   { path: 'signup', component: SignupComponent },
   { path: 'chat', component: PersonalChatComponent, canActivate: [AuthGuardService] }
