@@ -10,6 +10,7 @@ import {Howl, Howler} from 'howler';
 })
 export class PersonalChatComponent implements OnInit, AfterViewChecked {
 
+  dataLoadFinished: boolean;
   sessionDetails: SessionDetails;
   selectedContact: Contact;
   contacts: Array<Contact> = [];
@@ -26,8 +27,8 @@ export class PersonalChatComponent implements OnInit, AfterViewChecked {
 
   ngOnInit(): void {
 
-    this.appComponent
-      .checkValidSession()
+    this.chatService
+      .getSessionDetailsObservable()
       .subscribe((sessionDetails) => {
 
         this.sessionDetails = sessionDetails;
@@ -42,10 +43,10 @@ export class PersonalChatComponent implements OnInit, AfterViewChecked {
         this.chatService
           .getMessagesObservable()
           .subscribe((message) => {
-
             this.notifyReceivedMessage(message);
           });
 
+        this.dataLoadFinished = true;
       });
 
   }
@@ -64,7 +65,7 @@ export class PersonalChatComponent implements OnInit, AfterViewChecked {
 
   notifySentMessage(message: ChatMessage): void {
     this.addMessageToHistory(
-      () => this.findMessageDestinationContact(message),
+      () => this.findContact(message.destinationId),
       message
     );
   }

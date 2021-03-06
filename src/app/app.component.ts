@@ -1,7 +1,8 @@
 import {Component} from '@angular/core';
-import {ChatService, Contact, ContactType, LoginRequest, ResponseStatus, SessionDetails, User} from './chat.service';
 import {Router} from '@angular/router';
-import {Observable} from 'rxjs';
+import {MatDialog} from '@angular/material/dialog';
+import {ChatService, LoginRequest, ResponseStatus, SessionDetails} from './chat.service';
+import {SystemInfoComponent} from './system-info/system-info.component';
 
 @Component({
   selector: 'app-root',
@@ -11,42 +12,25 @@ import {Observable} from 'rxjs';
 export class AppComponent {
 
   sessionDetails: SessionDetails;
-  availableUsers: Array<Contact>;
   title = 'SocialChat';
 
-  constructor(private chatService: ChatService, private router: Router) {
-    this.checkLoggedIn();
+  constructor(private chatService: ChatService, private router: Router, private systemInfoDialog: MatDialog) {
+    this.loadSession();
   }
 
-  checkLoggedIn(): void {
-
+  loadSession(): void {
     this.chatService
       .getSessionDetailsObservable()
       .subscribe(sessionDetails => {
         this.sessionDetails = sessionDetails;
-        if (sessionDetails?.loggedIn) {
-          this.getAvailableUsers();
-          this.router.navigate(['/chat']);
-        } else {
-          this.router.navigate(['/login']);
-        }
       });
-
   }
 
-  checkValidSession(): Observable<SessionDetails> {
-    return new Observable((observer) => {
-      this.chatService
-        .getSessionDetailsObservable()
-        .subscribe(sessionDetails => {
-          if (!sessionDetails.loggedIn) {
-            this.router.navigate(['/login']);
-            observer.error(new Error('not logged in'));
-          }
-          observer.next(sessionDetails);
-          observer.complete();
-        });
-    });
+  navigateToPage(page: string): void {
+    setTimeout(
+      () => this.router.navigate([page]),
+      3000
+    );
   }
 
   login(loginRequest: LoginRequest): void {
@@ -66,9 +50,6 @@ export class AppComponent {
           this.registerSession(sessionDetails);
 
         }
-        // } else {
-        //   this.chatService.deregisterSession();
-        // }
 
       });
 
@@ -89,10 +70,7 @@ export class AppComponent {
           };
 
           this.registerSession(sessionDetails);
-      }
-        // } else {
-        //   this.chatService.deregisterSession();
-        // }
+        }
 
       });
 
@@ -100,16 +78,11 @@ export class AppComponent {
 
   logout(): void {
     this.chatService.logoff();
-    this.checkLoggedIn();
+    this.router.navigate(['/login']);
   }
 
-  getAvailableUsers(): void {
-    this.chatService
-      .getContactsObservable()
-      .subscribe(response => {
-        this.availableUsers = response
-          .filter(contact => contact.contactType !== ContactType.GROUP);
-      });
+  showSystemInfo(): void {
+    this.systemInfoDialog.open(SystemInfoComponent);
   }
 
   isLoggedIn(): boolean {
@@ -123,7 +96,7 @@ export class AppComponent {
       .toPromise()
       .then(sessionDetails => {
         this.sessionDetails = sessionDetails;
-        this.router.navigate(['/chat']);
+        this.navigateToPage('/chat');
       });
   }
 

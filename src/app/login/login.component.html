@@ -1,4 +1,15 @@
-<mat-card style="width: 25%; min-width: 300px; margin: auto; margin-top: 20px;">
+
+
+<mat-card *ngIf="loggingIn" class="card">
+  <mat-card-content>
+    <p style="text-align: center">Logging in</p>
+    <p style="text-align: center">
+      <mat-spinner></mat-spinner>
+    </p>
+  </mat-card-content>
+</mat-card>
+
+<mat-card *ngIf="!loggingIn" class="card">
     <p style="text-align: center;">Login</p>
     <mat-card-content>
 

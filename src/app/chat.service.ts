@@ -2,8 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable, Subject, BehaviorSubject, interval } from 'rxjs';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
 import { environment } from '../environments/environment';
-import {AppComponent} from './app.component';
-import {Router} from '@angular/router';
+import { Router } from '@angular/router';
 
 export enum MessageType {
   CONTACTS_LIST = 'CONTACTS_LIST',
@@ -131,48 +130,49 @@ export class ChatService {
 
   constructor(private router: Router) {
     this.localStorage = window.localStorage;
-    this.loadSession();
     this.openWebSocketConnection();
   }
 
   openWebSocketConnection(): void {
 
+    this.loadSession();
     this.sessionDetailsSubject.next(this.sessionDetails);
     this.chatServerWebSocket = webSocket<ResponseMessage>(`${environment.backendUrl}`);
-    this.chatServerWebSocket.asObservable()
-      .subscribe(responseMessage => {
-
-        const messagePayload = responseMessage.payload;
-
-        if (responseMessage.type === MessageType.USER_MESSAGE) {
-          this.messagesSubject.next(messagePayload);
-        } else if (responseMessage.type === MessageType.CONTACTS_LIST) {
-          this.contactsSubject.next(this.formatContacts(messagePayload));
-        } else if (responseMessage.type === MessageType.NEW_CONTACT_REGISTERED) {
-          this.contactsSubject.next(this.formatContacts(messagePayload));
-        } else if (responseMessage.type === MessageType.AUTHENTICATE) {
-          this.loginSubject.next(messagePayload);
-        } else if (responseMessage.type === MessageType.SIGNUP) {
-          this.signupSubject.next(messagePayload);
-        } else if (responseMessage.type === MessageType.NOT_AUTHENTICATED) {
-          this.unauthorizedOrClosed();
-        }
-
-      },
-      (error) => {
-        if (this.chatServerWebSocket.isStopped) {
-          this.unauthorizedOrClosed();
-        }
-
-        console.error('Error occuried on websocket connection');
-        console.error(error);
-      });
+    this.listenWebSocketMessages();
 
     if (this.sessionDetails?.token !== undefined) {
       this.restoreSession();
     }
 
     this.playPingPong();
+  }
+
+  listenWebSocketMessages(): void {
+
+    this.chatServerWebSocket.asObservable()
+      .subscribe(responseMessage => {
+
+          const messagePayload = responseMessage.payload;
+
+          if (responseMessage.type === MessageType.USER_MESSAGE) {
+            this.messagesSubject.next(messagePayload);
+          } else if (responseMessage.type === MessageType.CONTACTS_LIST || responseMessage.type === MessageType.NEW_CONTACT_REGISTERED) {
+            this.contactsSubject.next(this.formatContacts(messagePayload));
+          } else if (responseMessage.type === MessageType.AUTHENTICATE) {
+            this.loginSubject.next(messagePayload);
+          } else if (responseMessage.type === MessageType.SIGNUP) {
+            this.signupSubject.next(messagePayload);
+          } else if (responseMessage.type === MessageType.NOT_AUTHENTICATED) {
+            this.unauthorizedOrClosed();
+          }
+
+        },
+        (error) => {
+          if (this.chatServerWebSocket.isStopped) {
+            this.closeWebsocketConnection();
+            this.openWebSocketConnection();
+          }
+        });
 
   }
 
@@ -199,11 +199,8 @@ export class ChatService {
     this.chatServerWebSocket.next(restoreSessionRequest);
   }
 
-  playPingPong(): void {
-    interval(5000)
-      .subscribe(val => {
-        this.chatServerWebSocket.next(pingMessage);
-      });
+  isLoggedIn(): boolean {
+    return this.sessionDetails.loggedIn;
   }
 
   closeWebsocketConnection(): void {
@@ -306,8 +303,14 @@ export class ChatService {
     return this.messagesSubject;
   }
 
+  private playPingPong(): void {
+    interval(5000)
+      .subscribe(val => {
+        this.chatServerWebSocket.next(pingMessage);
+      });
+  }
+
   private unauthorizedOrClosed(): void {
-    alert('unauthorized');
     this.deregisterSession();
     this.router.navigate(['/login']);
   }
