@@ -18,7 +18,7 @@ git push origin $newVersion
 # Packages source code
 git checkout gb-pages-release
 git pull --rebase origin master
-npm build
+ng build --prod
 docker build -t $APPNAME:latest .
 
 # commits changes to release branch
