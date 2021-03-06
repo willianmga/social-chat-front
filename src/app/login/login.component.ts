@@ -11,6 +11,7 @@ import {Router} from '@angular/router';
 export class LoginComponent implements OnInit {
 
   hide = true;
+  loggingIn = false;
 
   constructor(private chatService: ChatService, private router: Router, private appComponent: AppComponent) { }
 
@@ -18,6 +19,8 @@ export class LoginComponent implements OnInit {
   }
 
   login(username: string, password: string): void {
+
+    this.loggingIn = true;
 
     const loginRequest: LoginRequest = {
       username,

@@ -4,18 +4,19 @@ import { LoginComponent } from './login/login.component';
 import { PersonalChatComponent } from './personal-chat/personal-chat.component';
 import {AppComponent} from './app.component';
 import {SignupComponent} from './signup/signup.component';
+import {AuthGuardService} from './service/auth-guard.service';
 
 const routes: Routes = [
   { path: '', component: AppComponent },
   { path: 'login', component: LoginComponent },
   { path: 'signup', component: SignupComponent },
-  { path: 'chat', component: PersonalChatComponent }
+  { path: 'chat', component: PersonalChatComponent, canActivate: [AuthGuardService] }
 ];
 
 @NgModule({
   declarations: [],
   imports: [
-    RouterModule.forRoot(routes)
+    RouterModule.forRoot(routes, { useHash: true })
   ],
   exports: [
     RouterModule

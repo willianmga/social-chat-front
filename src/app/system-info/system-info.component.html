@@ -1,0 +1,40 @@
+<mat-card style="background-color: white; color: black">
+
+  <mat-card-content>
+
+    <img mat-card-image src="../../assets/logo.png">
+
+    <h1 style="text-align: center">SocialChat</h1>
+    <p style="text-align: center">{{description}}</p>
+
+    <div style="width: 100%; display: flex">
+      <div style="width: 50%">
+        <h3>Developers</h3>
+        <ul>
+          <li *ngFor="let contributor of contributors">
+            {{contributor.name}}
+            (<a href="{{contributor.url}}" target="_blank">page</a>)
+            (<a href="mailto:{{contributor.email}}" target="_blank">contact</a>)
+          </li>
+        </ul>
+      </div>
+      <div style="width: 35%">
+        <h3>Repository</h3>
+        <a href="{{repositoryUrl}}" target="_blank">{{repoName}}</a>
+      </div>
+      <div style="width: 15%">
+        <h3>Version</h3>
+        <p>{{version}}</p>
+      </div>
+    </div>
+
+  </mat-card-content>
+  <mat-card-footer>
+    <p style="text-align: right; margin: 20px">
+      <button mat-raised-button color="primary" (click)="close()">Close</button>
+    </p>
+
+  </mat-card-footer>
+</mat-card>
+
+

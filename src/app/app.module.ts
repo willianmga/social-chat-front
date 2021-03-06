@@ -14,21 +14,24 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatTableModule } from '@angular/material/table';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatDialogModule } from '@angular/material/dialog';
 
 import { AppRoutingModule } from './app-routing.module';
-
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { PersonalChatComponent } from './personal-chat/personal-chat.component';
 import { LoginComponent } from './login/login.component';
 import { SignupComponent } from './signup/signup.component';
+import { SystemInfoComponent } from './system-info/system-info.component';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 
 @NgModule({
   declarations: [
     AppComponent,
     PersonalChatComponent,
     LoginComponent,
-    SignupComponent
+    SignupComponent,
+    SystemInfoComponent
   ],
   imports: [
     BrowserModule,
@@ -47,7 +50,9 @@ import { SignupComponent } from './signup/signup.component';
     MatAutocompleteModule,
     MatGridListModule,
     MatTableModule,
-    MatMenuModule
+    MatMenuModule,
+    MatDialogModule,
+    MatProgressSpinnerModule
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -4,7 +4,7 @@ mat-card {
 
 .personal-chat-component {
     display: flex;
-    flex-direction: row;  
+    flex-direction: row;
     width: 85%;
     margin: auto;
     height: 100%;
@@ -17,7 +17,7 @@ mat-card {
     color: black;
 }
 
-.chat-history-area {    
+.chat-history-area {
     display: flex;
     flex-direction: column;
     width: 82%;
@@ -50,18 +50,18 @@ mat-card {
 }
 
 .message-container-received-message {
-    text-align: left; 
-    font-size: small; 
-    color: blueviolet; 
-    font-weight: bold; 
+    text-align: left;
+    font-size: small;
+    color: blueviolet;
+    font-weight: bold;
     margin-left: 0px;
 }
 
 .message-container-sent-message {
-    text-align: left; 
-    font-size: small; 
-    color: green; 
-    font-weight: bold; 
+    text-align: left;
+    font-size: small;
+    color: green;
+    font-weight: bold;
     margin-left: 0px;
 }
 
@@ -83,7 +83,7 @@ table {
 }
 
 .message-type-area mat-form-field {
-    width: 90%; 
+    width: 90%;
 }
 
 .mediumIcon {

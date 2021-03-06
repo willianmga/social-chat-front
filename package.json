@@ -1,6 +1,19 @@
 {
   "name": "reactive-chat-front",
-  "version": "1.0.0",
+  "description": "The chat that helps you know others",
+  "version": "1.0.1",
+  "repository": {
+    "directory": "GitHub",
+    "type": "git",
+    "url": "https://github.com/willianmga/reactive-chat-front"
+  },
+  "contributors": [
+    {
+      "name" : "Willian Azevedo",
+      "email" : "willian.bodnariuc@gmail.com",
+      "url" : "https://willianmga.github.io/"
+    }
+  ],
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
