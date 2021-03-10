@@ -11,7 +11,7 @@ import {Howl, Howler} from 'howler';
 export class ChatMobileComponent implements OnInit {
 
   dataLoadFinished: boolean;
-  listMode = false; // TODO: change
+  listMode = true;
   sessionDetails: SessionDetails;
   selectedContact: Contact;
   contacts: Array<Contact> = [];
@@ -27,28 +27,26 @@ export class ChatMobileComponent implements OnInit {
   }
 
   ngOnInit(): void {
-
     this.chatService
       .getSessionDetailsObservable()
       .subscribe((sessionDetails) => {
-
         this.sessionDetails = sessionDetails;
-
-        this.chatService
-          .requestContacts()
-          .subscribe((response) => {
-            response.forEach(contact => this.contacts.push(contact));
-            this.selectContact(this.contacts[0]);
-          });
-
-        this.chatService
-          .getMessagesObservable()
-          .subscribe((message) => {
-            this.notifyReceivedMessage(message);
-          });
-
-        this.dataLoadFinished = true;
       });
+
+    this.chatService
+      .requestContacts()
+      .subscribe((response) => {
+        response.forEach(contact => this.contacts.push(contact));
+        this.selectContact(this.contacts[0]);
+      });
+
+    this.chatService
+      .getMessagesObservable()
+      .subscribe((message) => {
+        this.notifyReceivedMessage(message);
+      });
+
+    this.dataLoadFinished = true;
 
   }
 

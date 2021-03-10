@@ -2,6 +2,7 @@
   display: grid;
   height: 100vh;
   grid-template-columns: 1fr;
+  grid-template-rows: 57px 1fr;
   grid-template-areas:
     "header"
     "main";

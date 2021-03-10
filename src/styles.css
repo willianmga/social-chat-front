@@ -12,3 +12,12 @@ body {
   --mobile-max-width-size: 450px;
   --background-color: #303030;
 }
+
+.errorMessageBox {
+  padding: 3px;
+  margin: 10px 0;
+  background: #f08981;
+  border: 1px solid red;
+  text-align: center;
+  color: white;
+}

@@ -8,8 +8,6 @@ mat-card {
   display: grid;
   height: 100%;
   grid-template-columns: 1fr;
-  justify-items: stretch;
-  align-items: stretch;
   grid-template-areas:
     "contacts-area"
     "chat-history-area";
@@ -17,7 +15,7 @@ mat-card {
 
 .contacts-area {
   display: grid;
-  min-height: 95vh;
+  min-height: 91vh;
   grid-row: 1;
   grid-area: contacts-area;
   background: white;
@@ -28,9 +26,10 @@ mat-card {
   background: #CED0CE;
   grid-row: 1;
   display: grid;
-  height: 95vh;
+  height: 90vh;
+  grid-row-gap: 10px;
   grid-template-columns: 1fr;
-  grid-template-rows: 50px calc(1fr - 120px) 70px;
+  grid-template-rows: 90px 1fr 80px;
   grid-template-areas:
     "contact-details-container"
     "message-history-container"
@@ -52,12 +51,10 @@ mat-card {
 
 .contact-details-container {
   grid-area: contact-details-container;
-  border: 3px solid green;
 }
 
 .message-history-container {
   grid-area: message-history-container;
-  border: 3px solid orange;
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -66,16 +63,12 @@ mat-card {
 
 .type-message-container {
   grid-area: type-message-container;
-  width: 100%;
-  padding: 0px 15px;
-  margin: 0;
-  overflow: auto;
+  padding: 0 15px;
   background: var(--background-color);
-  border: 10px solid aqua;
 }
 
 .message-type-area {
-
+  color: white;
 }
 
 .selected-contact-card {
@@ -105,10 +98,6 @@ mat-card {
   color: green;
   font-weight: bold;
   margin-left: 0px;
-}
-
-.message-type-area mat-form-field {
-  width: 90%;
 }
 
 .mediumIcon {
