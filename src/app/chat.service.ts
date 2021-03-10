@@ -73,6 +73,7 @@ export interface LoginResponse {
   token: string;
   user: User;
   status: ResponseStatus;
+  message?: string;
 }
 
 export interface SignupResponse {
@@ -120,8 +121,8 @@ const SESSION_KEY = 'session';
 export class ChatService {
 
   private chatServerWebSocket: WebSocketSubject<any>;
-  private contactsSubject: Subject<Array<any>> = new Subject<Array<any>>();
-  private sessionDetailsSubject: Subject<SessionDetails> = new Subject<SessionDetails>();
+  private contactsSubject: Subject<Array<Contact>> = new Subject<Array<Contact>>();
+  private sessionDetailsSubject: BehaviorSubject<SessionDetails> = new BehaviorSubject<SessionDetails>(loggedOffSessionDetails);
   private loginSubject: Subject<LoginResponse> = new Subject();
   private signupSubject: Subject<SignupResponse> = new Subject();
   private messagesSubject: Subject<ChatMessage> = new Subject<ChatMessage>();
@@ -147,7 +148,7 @@ export class ChatService {
     this.playPingPong();
   }
 
-  listenWebSocketMessages(): void {
+  private listenWebSocketMessages(): void {
 
     this.chatServerWebSocket.asObservable()
       .subscribe(responseMessage => {
@@ -176,7 +177,7 @@ export class ChatService {
 
   }
 
-  loadSession(): void {
+  private loadSession(): void {
 
     const sessionJson: string = this.localStorage.getItem(SESSION_KEY);
 
@@ -187,7 +188,7 @@ export class ChatService {
     this.sessionDetailsSubject.next(this.sessionDetails);
   }
 
-  restoreSession(): void {
+  private restoreSession(): void {
 
     const restoreSessionRequest: RequestMessage = {
       type: MessageType.REAUTHENTICATE,
@@ -200,10 +201,10 @@ export class ChatService {
   }
 
   isLoggedIn(): boolean {
-    return this.sessionDetails.loggedIn;
+    return this.sessionDetails?.loggedIn;
   }
 
-  closeWebsocketConnection(): void {
+  private closeWebsocketConnection(): void {
     this.chatServerWebSocket.complete();
   }
 
@@ -287,16 +288,13 @@ export class ChatService {
     this.openWebSocketConnection();
   }
 
-  getContactsObservable(): Observable<Array<Contact>> {
-    return this.contactsSubject;
-  }
-
   getSessionDetailsObservable(): Observable<SessionDetails> {
-    const session = this.sessionDetails;
-    return new Observable((observer) => {
-      observer.next(session);
-      observer.complete();
-    });
+    // const session = this.sessionDetails;
+    // return new Observable((observer) => {
+    //   observer.next(session);
+    //   observer.complete();
+    // });
+    return this.sessionDetailsSubject;
   }
 
   getMessagesObservable(): Observable<ChatMessage> {

@@ -1,16 +1,31 @@
-<mat-card style="width: 25%; min-width: 300px; margin: auto; margin-top: 20px;">
+<mat-card *ngIf="signingUp" class="card">
+  <mat-card-content>
+    <p style="text-align: center">Signing you up</p>
+    <p>
+      <mat-spinner style="margin: auto"></mat-spinner>
+    </p>
+  </mat-card-content>
+</mat-card>
+
+<mat-card *ngIf="!signingUp" class="card">
+
   <p style="text-align: center;">Create your account now, it's easy!</p>
+
+  <div *ngIf="error" class="errorMessageBox">
+    <p>{{errorMessage}}</p>
+  </div>
+
   <mat-card-content>
 
     <p>
       <mat-form-field appearance="fill" style="width: 100%;">
         <mat-label>Your Name</mat-label>
-        <input #nameInput matInput matNativeControl placeholder="Type your name">
+        <input #nameInput matInput  placeholder="Type your name">
       </mat-form-field>
 
       <mat-form-field appearance="fill" style="width: 100%;">
         <mat-label>Email</mat-label>
-        <input #emailInput type="email" matInput matNativeControl placeholder="Type your email">
+        <input #emailInput type="email" matInput placeholder="Type your email">
       </mat-form-field>
     </p>
 

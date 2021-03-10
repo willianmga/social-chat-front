@@ -1,7 +1,7 @@
 import {Component} from '@angular/core';
 import {Router} from '@angular/router';
 import {MatDialog} from '@angular/material/dialog';
-import {ChatService, LoginRequest, ResponseStatus, SessionDetails} from './chat.service';
+import {ChatService, SessionDetails} from './chat.service';
 import {SystemInfoComponent} from './system-info/system-info.component';
 
 @Component({
@@ -33,48 +33,7 @@ export class AppComponent {
     );
   }
 
-  login(loginRequest: LoginRequest): void {
 
-    this.chatService
-      .login(loginRequest)
-      .subscribe(loginResponse => {
-
-        if (loginResponse.status === ResponseStatus.SUCCESS) {
-
-          const sessionDetails: SessionDetails = {
-            loggedIn: true,
-            token: loginResponse.token,
-            loggedInUser: loginResponse.user
-          };
-
-          this.registerSession(sessionDetails);
-
-        }
-
-      });
-
-  }
-
-  signup(name: string, username: string): void {
-
-    this.chatService
-      .signup(name, username)
-      .subscribe((signupResponse) => {
-
-        if (signupResponse.status === ResponseStatus.SUCCESS) {
-
-          const sessionDetails: SessionDetails = {
-            loggedIn: true,
-            token: signupResponse.token,
-            loggedInUser: signupResponse.user
-          };
-
-          this.registerSession(sessionDetails);
-        }
-
-      });
-
-  }
 
   logout(): void {
     this.chatService.logoff();

@@ -1,0 +1,87 @@
+<section class="main-container" *ngIf="dataLoadFinished">
+
+  <!-- Contacts Area -->
+  <div class="contacts-area" *ngIf="listMode" > <!-- *ngIf="listMode" -->
+
+    <!-- Current User Details -->
+    <mat-card class="current-contact-card">
+      <mat-card-header>
+        <img mat-card-avatar src="{{ sessionDetails?.loggedInUser?.avatar }}"/>
+      </mat-card-header>
+    </mat-card>
+
+    <!-- Lateral Contact List Area -->
+    <div>
+      <mat-selection-list [multiple]="false">
+        <!-- TODO: fix color of selected option -->
+        <mat-list-option class="contact-option" *ngFor="let contact of contacts" (click)="openContact(contact)">
+          <img mat-list-avatar src="{{contact?.avatar}}"/>
+          <span style="font-weight: bold">{{contact.name}}</span>
+          <p style="font-size: x-small" *ngIf="!hasUnreadMessage(contact)">{{contact.description}}</p>
+          <p style="font-size: x-small; font-weight: bold" *ngIf="hasUnreadMessage(contact)">{{ getLastReceivedMessage(contact) }}</p>
+          <mat-divider></mat-divider>
+        </mat-list-option>
+      </mat-selection-list>
+    </div>
+
+  </div>
+
+  <!-- Chat History Area -->
+  <div class="chat-history-area" *ngIf="!listMode">
+
+    <!-- Selected Contact Details Area -->
+    <section class="contact-details-container">
+      <mat-card class="selected-contact-card">
+        <mat-card-header>
+          <img mat-card-avatar src="{{selectedContact?.avatar}}"/>
+          <mat-card-title>{{selectedContact?.name}}</mat-card-title>
+          <mat-card-subtitle>{{selectedContact?.description}}</mat-card-subtitle>
+          <!-- TODO: move button to the right -->
+          <button mat-icon-button class="mediumIcon" (click)="closeContact()">
+            <mat-icon [inline]="true">keyboard_return</mat-icon>
+          </button>
+        </mat-card-header>
+      </mat-card>
+    </section>
+
+    <!-- Chat History -->
+    <section #chatHistoryContainer class="message-history-container">
+      <div *ngFor="let chatMessage of selectedContact?.chatHistory">
+        <mat-card class="message-container">
+
+          <p
+            [style.text-align]="isReceivedMessage(chatMessage) ? 'left' : 'right'"
+            [style.color]="isReceivedMessage(chatMessage) ? 'purple' : 'black'"
+            style="margin: 0px;"
+            *ngIf="isGroupMessage(chatMessage) && isReceivedMessage(chatMessage)">{{ getSenderName(chatMessage) }}</p>
+
+          <mat-card-content
+            [style.text-align]="isReceivedMessage(chatMessage) ? 'left' : 'right'">{{chatMessage.message}}</mat-card-content>
+
+        </mat-card>
+      </div>
+    </section>
+
+    <!-- Message Typing area -->
+    <section class="type-message-container">
+      <div class="message-type-area">
+
+        <p>
+          <mat-form-field style="width: 80%">
+            <mat-label>Message</mat-label>
+            <input #messageinput matInput matNativeControl (keyup.enter)="sendMessage(messageinput.value)" maxlength="280" placeholder="Type your message">
+          </mat-form-field>
+
+          <button mat-icon-button (click)="sendMessage(messageinput.value)" style="margin-left: 20px;">
+            <mat-icon [inline]="true" class="mediumIcon">send</mat-icon>
+          </button>
+        </p>
+
+
+      </div>
+    </section>
+
+  </div>
+
+
+</section>

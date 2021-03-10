@@ -4,13 +4,14 @@ import {AppComponent} from '../app.component';
 import {Howl, Howler} from 'howler';
 
 @Component({
-  selector: 'app-personal-chat',
-  templateUrl: './personal-chat.component.html',
-  styleUrls: ['./personal-chat.component.css']
+  selector: 'app-chat-mobile',
+  templateUrl: './chat-mobile.component.html',
+  styleUrls: ['./chat-mobile.component.css']
 })
-export class PersonalChatComponent implements OnInit, AfterViewChecked {
+export class ChatMobileComponent implements OnInit {
 
   dataLoadFinished: boolean;
+  listMode = true;
   sessionDetails: SessionDetails;
   selectedContact: Contact;
   contacts: Array<Contact> = [];
@@ -21,33 +22,31 @@ export class PersonalChatComponent implements OnInit, AfterViewChecked {
 
   constructor(private chatService: ChatService, private appComponent: AppComponent) {
     this.player = new Howl({
-        src: ['assets/notification.mp3']
-      });
+      src: ['assets/notification.mp3']
+    });
   }
 
   ngOnInit(): void {
-
     this.chatService
       .getSessionDetailsObservable()
       .subscribe((sessionDetails) => {
-
         this.sessionDetails = sessionDetails;
-
-        this.chatService
-          .requestContacts()
-          .subscribe((response) => {
-            response.forEach(contact => this.contacts.push(contact));
-            this.openContact(this.contacts[0]);
-          });
-
-        this.chatService
-          .getMessagesObservable()
-          .subscribe((message) => {
-            this.notifyReceivedMessage(message);
-          });
-
-        this.dataLoadFinished = true;
       });
+
+    this.chatService
+      .requestContacts()
+      .subscribe((response) => {
+        response.forEach(contact => this.contacts.push(contact));
+        this.selectContact(this.contacts[0]);
+      });
+
+    this.chatService
+      .getMessagesObservable()
+      .subscribe((message) => {
+        this.notifyReceivedMessage(message);
+      });
+
+    this.dataLoadFinished = true;
 
   }
 
@@ -91,6 +90,8 @@ export class PersonalChatComponent implements OnInit, AfterViewChecked {
     destinationContact.chatHistory.push(message);
   }
 
+  /* View Methods  */
+
   sendMessage(message: string): void {
     if (message !== undefined && message !== '') {
       const sentMessage: ChatMessage = this.chatService.sendMessage(message, this.selectedContact);
@@ -101,10 +102,18 @@ export class PersonalChatComponent implements OnInit, AfterViewChecked {
     }
   }
 
-  scrollToBottom(): void {
-    try {
-      this.chatHistoryContainer.nativeElement.scrollTop = this.chatHistoryContainer.nativeElement.scrollHeight;
-    } catch (err) {}
+  openContact(contact: Contact): void {
+    this.selectContact(contact);
+    this.listMode = false;
+    console.log(this.listMode);
+  }
+
+  selectContact(contact: Contact): void {
+    this.selectedContact = contact;
+  }
+
+  closeContact(): void {
+    this.listMode = true;
   }
 
   isReceivedMessage(message: ChatMessage): boolean {
@@ -127,8 +136,20 @@ export class PersonalChatComponent implements OnInit, AfterViewChecked {
     return '';
   }
 
-  openContact(contact: Contact): void {
-    this.selectedContact = contact;
+  // TODO: find proper last message received
+  getLastReceivedMessage(contact: Contact): string {
+    return contact.chatHistory[contact.chatHistory.length - 1]?.message;
+  }
+
+  // TODO: find whether there's unread message properly
+  hasUnreadMessage(contact: Contact): boolean {
+    return contact.chatHistory.length > 0;
+  }
+
+  scrollToBottom(): void {
+    try {
+      this.chatHistoryContainer.nativeElement.scrollTop = this.chatHistoryContainer.nativeElement.scrollHeight;
+    } catch (err) {}
   }
 
 }

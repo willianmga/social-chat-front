@@ -1,22 +1,28 @@
-.main-sidenav-container {
-    width: auto;
-    height: 93.2%;  
-    align-items: center;
-    justify-content: center;    
+.container {
+  display: grid;
+  height: 100vh;
+  grid-template-columns: 1fr;
+  grid-template-rows: 57px 1fr;
+  grid-template-areas:
+    "header"
+    "main";
 }
-  
-.main-sidenav-content {
-    display: flex; 
-    width: auto;
-    height: 93.2%;
-    align-items: center;
-    justify-content: center;
+
+header {
+  grid-area: header;
+}
+
+main {
+  grid-area: main;
 }
 
 .spacer {
     flex: 1 1 auto;
 }
 
-.mediumIcon {
-    font-size: 100px;
+@media screen and (max-width: var(--mobile-max-width-size)) {
+  .header {
+    display: none;
+    height: 1vh;
+  }
 }
