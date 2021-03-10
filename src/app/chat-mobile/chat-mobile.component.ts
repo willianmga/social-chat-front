@@ -11,7 +11,7 @@ import {Howl, Howler} from 'howler';
 export class ChatMobileComponent implements OnInit {
 
   dataLoadFinished: boolean;
-  listMode: true;
+  listMode = false; // TODO: change
   sessionDetails: SessionDetails;
   selectedContact: Contact;
   contacts: Array<Contact> = [];
@@ -92,6 +92,8 @@ export class ChatMobileComponent implements OnInit {
     destinationContact.chatHistory.push(message);
   }
 
+  /* View Methods  */
+
   sendMessage(message: string): void {
     if (message !== undefined && message !== '') {
       const sentMessage: ChatMessage = this.chatService.sendMessage(message, this.selectedContact);
@@ -102,10 +104,18 @@ export class ChatMobileComponent implements OnInit {
     }
   }
 
-  scrollToBottom(): void {
-    try {
-      this.chatHistoryContainer.nativeElement.scrollTop = this.chatHistoryContainer.nativeElement.scrollHeight;
-    } catch (err) {}
+  openContact(contact: Contact): void {
+    this.selectContact(contact);
+    this.listMode = false;
+    console.log(this.listMode);
+  }
+
+  selectContact(contact: Contact): void {
+    this.selectedContact = contact;
+  }
+
+  closeContact(): void {
+    this.listMode = true;
   }
 
   isReceivedMessage(message: ChatMessage): boolean {
@@ -128,18 +138,20 @@ export class ChatMobileComponent implements OnInit {
     return '';
   }
 
-  openContact(contact: Contact): void {
-    this.selectContact(contact);
-    this.listMode = false;
-    console.log(this.listMode);
+  // TODO: find proper last message received
+  getLastReceivedMessage(contact: Contact): string {
+    return contact.chatHistory[contact.chatHistory.length - 1]?.message;
   }
 
-  selectContact(contact: Contact): void {
-    this.selectedContact = contact;
+  // TODO: find whether there's unread message properly
+  hasUnreadMessage(contact: Contact): boolean {
+    return contact.chatHistory.length > 0;
   }
 
-  closeContact(): void {
-    this.listMode = true;
+  scrollToBottom(): void {
+    try {
+      this.chatHistoryContainer.nativeElement.scrollTop = this.chatHistoryContainer.nativeElement.scrollHeight;
+    } catch (err) {}
   }
 
 }

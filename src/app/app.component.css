@@ -1,23 +1,18 @@
 .container {
   display: grid;
   height: 100vh;
-  background: var(--background-color);
   grid-template-columns: 1fr;
-  grid-template-rows: 0.1fr 0.9fr;
   grid-template-areas:
-    "nav"
+    "header"
     "main";
 }
 
-nav {
-  grid-area: nav;
-  height: 8vh;
-
+header {
+  grid-area: header;
 }
 
 main {
   grid-area: main;
-  height: 92vh;
 }
 
 .spacer {

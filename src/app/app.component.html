@@ -1,5 +1,5 @@
 <div class="container">
-  <nav>
+  <header>
     <!-- Toolbar Section -->
     <mat-toolbar color="primary">
       <span>{{title}}</span>
@@ -7,7 +7,7 @@
 
       <!-- Notifications Button -->
       <button mat-icon-button *ngIf="isLoggedIn()" [matMenuTriggerFor]="notification" style="margin-right: 10px;">
-        <mat-icon [inline]="true" style="font-size: 30px;">notifications_active</mat-icon>
+        <mat-icon [inline]="true" style="font-size: 30px;">notifications_none</mat-icon>
       </button>
       <mat-menu #notification="matMenu">
         <span mat-menu-item>No notifications to show</span>
@@ -15,7 +15,8 @@
 
       <!-- Switch User Button -->
       <button mat-icon-button  *ngIf="isLoggedIn()" [matMenuTriggerFor]="menu">
-        <img mat-card-avatar src="{{ sessionDetails?.loggedInUser?.avatar }}"/>
+        <mat-icon [inline]="true" style="font-size: 30px;">account_circle</mat-icon>
+        <!-- <img mat-card-avatar src="{{ sessionDetails?.loggedInUser?.avatar }}"/> -->
       </button>
       <mat-menu #menu="matMenu">
         <span mat-menu-item>Logged as: {{sessionDetails?.loggedInUser?.name}}</span>
@@ -24,7 +25,7 @@
       </mat-menu>
 
     </mat-toolbar>
-  </nav>
+  </header>
   <main>
     <router-outlet></router-outlet>
   </main>
