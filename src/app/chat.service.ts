@@ -34,7 +34,11 @@ export enum ContactType {
 export enum ResponseStatus {
   SUCCESS = 'SUCCESS',
   INVALID_CREDENTIALS = 'INVALID_CREDENTIALS',
-  SERVER_ERROR = 'SERVER_ERROR'
+  INVALID_NAME = 'INVALID_NAME',
+  INVALID_USERNAME = 'INVALID_USERNAME',
+  INVALID_PASSWORD = 'INVALID_PASSWORD',
+  SERVER_ERROR = 'SERVER_ERROR',
+  USERNAME_IN_USE = 'USERNAME_IN_USE'
 }
 
 export interface SessionDetails {
@@ -57,7 +61,7 @@ export interface ResponseMessage {
 
 export interface ChatMessage {
   id?: string;
-  from: string;
+  from?: string;
   destinationType: DestinationType;
   destinationId: string;
   message: string;
@@ -219,13 +223,14 @@ export class ChatService {
     return this.loginSubject;
   }
 
-  signup(name: string, username: string): Observable<SignupResponse> {
+  signup(name: string, username: string, password: string): Observable<SignupResponse> {
 
     const authenticateRequest: RequestMessage = {
       type: MessageType.SIGNUP,
       payload: {
         name,
-        username
+        username,
+        password
       }
     };
 
@@ -289,11 +294,6 @@ export class ChatService {
   }
 
   getSessionDetailsObservable(): Observable<SessionDetails> {
-    // const session = this.sessionDetails;
-    // return new Observable((observer) => {
-    //   observer.next(session);
-    //   observer.complete();
-    // });
     return this.sessionDetailsSubject;
   }
 

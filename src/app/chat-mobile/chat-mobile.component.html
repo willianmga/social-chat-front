@@ -1,7 +1,13 @@
+<section *ngIf="!dataLoadFinished">
+  <p style="">
+    <mat-spinner [diameter]="60" style="margin: 50px auto;"></mat-spinner>
+  </p>
+</section>
+
 <section class="main-container" *ngIf="dataLoadFinished">
 
   <!-- Contacts Area -->
-  <div class="contacts-area" *ngIf="listMode" > <!-- *ngIf="listMode" -->
+  <div class="contacts-area" *ngIf="listMode" >
 
     <!-- Current User Details -->
     <mat-card class="current-contact-card">

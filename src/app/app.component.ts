@@ -11,8 +11,9 @@ import {SystemInfoComponent} from './system-info/system-info.component';
 })
 export class AppComponent {
 
-  sessionDetails: SessionDetails;
   title = 'SocialChat';
+  sessionDetails: SessionDetails;
+
 
   constructor(private chatService: ChatService, private router: Router, private systemInfoDialog: MatDialog) {
     this.loadSession();
@@ -26,15 +27,6 @@ export class AppComponent {
       });
   }
 
-  navigateToPage(page: string): void {
-    setTimeout(
-      () => this.router.navigate([page]),
-      3000
-    );
-  }
-
-
-
   logout(): void {
     this.chatService.logoff();
     this.router.navigate(['/login']);
@@ -46,17 +38,6 @@ export class AppComponent {
 
   isLoggedIn(): boolean {
     return this.sessionDetails?.loggedIn;
-  }
-
-  private registerSession(sessionDetails: SessionDetails): void {
-    this.chatService.registerSession(sessionDetails);
-    this.chatService
-      .getSessionDetailsObservable()
-      .toPromise()
-      .then(sessionDetails => {
-        this.sessionDetails = sessionDetails;
-        this.navigateToPage('/chat');
-      });
   }
 
 }

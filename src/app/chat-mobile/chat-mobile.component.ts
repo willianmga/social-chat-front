@@ -1,4 +1,4 @@
-import {AfterViewChecked, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {AfterViewChecked, AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {ChatMessage, ChatService, Contact, DestinationType, SessionDetails} from '../chat.service';
 import {AppComponent} from '../app.component';
 import {Howl, Howler} from 'howler';
@@ -8,10 +8,10 @@ import {Howl, Howler} from 'howler';
   templateUrl: './chat-mobile.component.html',
   styleUrls: ['./chat-mobile.component.css']
 })
-export class ChatMobileComponent implements OnInit {
+export class ChatMobileComponent implements OnInit, AfterViewInit {
 
   dataLoadFinished: boolean;
-  listMode = true;
+  listMode: boolean;
   sessionDetails: SessionDetails;
   selectedContact: Contact;
   contacts: Array<Contact> = [];
@@ -21,6 +21,8 @@ export class ChatMobileComponent implements OnInit {
   @ViewChild('chatHistoryContainer') private chatHistoryContainer: ElementRef;
 
   constructor(private chatService: ChatService, private appComponent: AppComponent) {
+    this.dataLoadFinished = false;
+    this.listMode = true;
     this.player = new Howl({
       src: ['assets/notification.mp3']
     });
@@ -46,8 +48,12 @@ export class ChatMobileComponent implements OnInit {
         this.notifyReceivedMessage(message);
       });
 
-    this.dataLoadFinished = true;
+  }
 
+  ngAfterViewInit(): void {
+    setTimeout(() => {
+      this.dataLoadFinished = true;
+    }, 1000);
   }
 
   ngAfterViewChecked(): void {

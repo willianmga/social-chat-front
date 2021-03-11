@@ -1,6 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {ChatService, LoginRequest, ResponseStatus, SessionDetails} from '../chat.service';
-import {AppComponent} from '../app.component';
 import {Router} from '@angular/router';
 
 @Component({
@@ -15,7 +14,7 @@ export class LoginComponent implements OnInit {
   error = false;
   errorMessage?: string;
 
-  constructor(private chatService: ChatService, private router: Router, private appComponent: AppComponent) { }
+  constructor(private chatService: ChatService, private router: Router) { }
 
   ngOnInit(): void {
   }
@@ -43,7 +42,7 @@ export class LoginComponent implements OnInit {
           };
 
           this.chatService.registerSession(sessionDetails);
-          this.appComponent.navigateToPage('/chat');
+          this.router.navigate(['/chat']);
 
         } else {
           this.loggingIn = false;
