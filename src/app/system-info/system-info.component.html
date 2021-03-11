@@ -7,8 +7,8 @@
     <h1 style="text-align: center">SocialChat</h1>
     <p style="text-align: center">{{description}}</p>
 
-    <div style="width: 100%; display: flex">
-      <div style="width: 50%">
+    <div class="container">
+      <div class="developers-container">
         <h3>Developers</h3>
         <ul>
           <li *ngFor="let contributor of contributors">
@@ -18,13 +18,25 @@
           </li>
         </ul>
       </div>
-      <div style="width: 35%">
-        <h3>Repository</h3>
-        <a href="{{repositoryUrl}}" target="_blank">{{repoName}}</a>
+      <div class="repository-container">
+        <h3>Repositories</h3>
+        <ul>
+          <li>
+            <a href="{{repositoryUrl}}" target="_blank">{{repoName}}</a>
+          </li>
+          <li>
+            <a href="https://github.com/willianmga/reactive-chat-back" target="_blank">reactive-chat-back</a>
+          </li>
+        </ul>
+
       </div>
-      <div style="width: 15%">
+      <div class="version-container">
         <h3>Version</h3>
-        <p>{{version}}</p>
+        <ul>
+          <li>Front-end: {{version}}</li>
+          <li>Back-end: 1.0.0</li>
+        </ul>
+
       </div>
     </div>
 

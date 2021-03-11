@@ -1,7 +1,7 @@
-import {AfterViewChecked, AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {ChatMessage, ChatService, Contact, DestinationType, SessionDetails} from '../chat.service';
+import {AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild} from '@angular/core';
+import {ChatMessage, ChatService, Contact, DestinationType, MOBILE_MAX_WIDTH, SessionDetails} from '../chat.service';
 import {AppComponent} from '../app.component';
-import {Howl, Howler} from 'howler';
+import {Howl} from 'howler';
 
 @Component({
   selector: 'app-chat-mobile',
@@ -10,6 +10,7 @@ import {Howl, Howler} from 'howler';
 })
 export class ChatMobileComponent implements OnInit, AfterViewInit {
 
+  mobileMode: boolean;
   dataLoadFinished: boolean;
   listMode: boolean;
   sessionDetails: SessionDetails;
@@ -29,6 +30,9 @@ export class ChatMobileComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
+
+    this.checkMobileMode();
+
     this.chatService
       .getSessionDetailsObservable()
       .subscribe((sessionDetails) => {
@@ -58,6 +62,11 @@ export class ChatMobileComponent implements OnInit, AfterViewInit {
 
   ngAfterViewChecked(): void {
     this.scrollToBottom();
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event): void {
+    this.checkMobileMode();
   }
 
   notifyReceivedMessage(message: ChatMessage): void {
@@ -111,7 +120,6 @@ export class ChatMobileComponent implements OnInit, AfterViewInit {
   openContact(contact: Contact): void {
     this.selectContact(contact);
     this.listMode = false;
-    console.log(this.listMode);
   }
 
   selectContact(contact: Contact): void {
@@ -156,6 +164,22 @@ export class ChatMobileComponent implements OnInit, AfterViewInit {
     try {
       this.chatHistoryContainer.nativeElement.scrollTop = this.chatHistoryContainer.nativeElement.scrollHeight;
     } catch (err) {}
+  }
+
+  showContactsList(): boolean {
+    return (this.mobileMode)
+      ? this.listMode
+      : true;
+  }
+
+  showMessageHistory(): boolean {
+    return (this.mobileMode)
+      ? !this.listMode
+      : true;
+  }
+
+  private checkMobileMode(): void {
+    this.mobileMode = window.innerWidth <= MOBILE_MAX_WIDTH;
   }
 
 }

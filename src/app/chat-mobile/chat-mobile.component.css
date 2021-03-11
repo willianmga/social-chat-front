@@ -14,8 +14,7 @@ mat-card {
 }
 
 .contacts-area {
-  display: grid;
-  min-height: 91vh;
+  min-height: calc(100vh - var(--toolbar-fixed-height));
   grid-row: 1;
   grid-area: contacts-area;
   background: white;
@@ -26,7 +25,7 @@ mat-card {
   background: #CED0CE;
   grid-row: 1;
   display: grid;
-  height: 90vh;
+  height: calc(100vh - var(--toolbar-fixed-height));
   grid-row-gap: 10px;
   grid-template-columns: 1fr;
   grid-template-rows: 90px 1fr 80px;
@@ -42,9 +41,9 @@ mat-card {
   color: black;
 }
 
-.current-contact-card {
-  height: 20px;
-  display: none;
+.contact-card {
+  height: 50px;
+  max-height: 50px;
 }
 
 /* Chat History Area */
@@ -64,20 +63,16 @@ mat-card {
 .type-message-container {
   grid-area: type-message-container;
   padding: 0 15px;
-  background: var(--background-color);
+  background: grey;
 }
 
 .message-type-area {
   color: white;
 }
 
-.selected-contact-card {
-  max-height: 50px;
-}
-
 .message-container {
   background-color: white;
-  color: black;
+  color: var(--background-color);
   margin: auto;
   width: 80%;
   margin-top: 4px;
@@ -102,4 +97,37 @@ mat-card {
 
 .mediumIcon {
   font-size: 35px;
+}
+
+@media only screen and (min-width: 450px) {
+
+  /* Container */
+
+  .main-container {
+    grid-template-columns: 0.5fr 1fr 3fr 0.5fr ;
+    grid-template-areas:
+    " . contacts-area chat-history-area . ";
+  }
+
+  .contacts-area {
+    height: calc(100vh - 57px);
+    min-width: 256px;
+    grid-area: contacts-area;
+  }
+
+  .chat-history-area {
+    min-width: 480px;
+    grid-area: chat-history-area;
+    grid-template-rows: 90px 1fr 110px;
+  }
+
+  /* Chat History Area */
+
+  .type-message-container {
+    width: 85%;
+    height: auto;
+    padding: 15px;
+    margin: 15px auto;
+  }
+
 }

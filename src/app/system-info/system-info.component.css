@@ -1,0 +1,22 @@
+
+@media only screen and (min-width: 450px) {
+
+  .container {
+    display: flex;
+    width: 100%;
+  }
+
+  .developers-container {
+    width: 50%;
+  }
+
+  .repository-container {
+    width: 35%;
+  }
+
+  .version-container {
+    width: 15%;
+  }
+
+}
+

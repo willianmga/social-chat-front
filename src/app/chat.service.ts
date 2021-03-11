@@ -103,6 +103,8 @@ export interface Contact {
   chatHistory?: Array<ChatMessage>;
 }
 
+export const MOBILE_MAX_WIDTH = 450;
+
 const pingMessage: RequestMessage = {
   type: MessageType.PING
 };

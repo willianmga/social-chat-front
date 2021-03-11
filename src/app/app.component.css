@@ -1,8 +1,13 @@
+mat-toolbar {
+  min-height: var(--toolbar-fixed-height);
+  max-height: var(--toolbar-fixed-height);
+}
+
 .container {
   display: grid;
   height: 100vh;
   grid-template-columns: 1fr;
-  grid-template-rows: 57px 1fr;
+  grid-template-rows: var(--toolbar-fixed-height) 1fr;
   grid-template-areas:
     "header"
     "main";
@@ -18,11 +23,4 @@ main {
 
 .spacer {
     flex: 1 1 auto;
-}
-
-@media screen and (max-width: var(--mobile-max-width-size)) {
-  .header {
-    display: none;
-    height: 1vh;
-  }
 }

@@ -11,6 +11,7 @@ body {
 :root {
   --mobile-max-width-size: 450px;
   --background-color: #303030;
+  --toolbar-fixed-height: 56px;
 }
 
 .errorMessageBox {
