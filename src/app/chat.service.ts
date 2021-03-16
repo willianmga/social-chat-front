@@ -7,6 +7,7 @@ import {HttpClient} from '@angular/common/http';
 
 export enum MessageType {
   CONTACTS_LIST = 'CONTACTS_LIST',
+  CHAT_HISTORY = 'CHAT_HISTORY',
   NEW_CONTACT_REGISTERED = 'NEW_CONTACT_REGISTERED',
   USER_MESSAGE = 'USER_MESSAGE',
   PING = 'PING',
@@ -105,6 +106,15 @@ export interface SignupResponse {
   status: ResponseStatus;
 }
 
+export interface ChatHistoryRequest {
+  destinationId: string;
+}
+
+export interface ChatHistoryResponse {
+  destinationId: string;
+  chatHistory: Array<ChatMessage>;
+}
+
 export interface User {
   id: string;
   name: string;
@@ -151,6 +161,7 @@ export class ChatService {
   private loginSubject: Subject<LoginResponse> = new Subject();
   private signupSubject: Subject<SignupResponse> = new Subject();
   private messagesSubject: Subject<ChatMessage> = new Subject<ChatMessage>();
+  private chatHistorySubject: Subject<ChatHistoryResponse> = new Subject<ChatHistoryResponse>();
   private sessionDetails: SessionDetails;
   private localStorage: Storage;
 
@@ -182,6 +193,8 @@ export class ChatService {
 
           if (responseMessage.type === MessageType.USER_MESSAGE) {
             this.messagesSubject.next(messagePayload);
+          } else if (responseMessage.type === MessageType.CHAT_HISTORY) {
+            this.chatHistorySubject.next(messagePayload);
           } else if (responseMessage.type === MessageType.CONTACTS_LIST || responseMessage.type === MessageType.NEW_CONTACT_REGISTERED) {
             this.contactsSubject.next(this.formatContacts(messagePayload));
           } else if (responseMessage.type === MessageType.AUTHENTICATE) {
@@ -231,6 +244,10 @@ export class ChatService {
 
   private closeWebsocketConnection(): void {
     this.chatServerWebSocket.complete();
+  }
+
+  sendWebsocketMessage(message: any): void {
+    this.chatServerWebSocket.next(message);
   }
 
   login(loginRequest: LoginRequest): Observable<LoginResponse> {
@@ -284,6 +301,21 @@ export class ChatService {
     return chatMessage;
   }
 
+  requestChatHistory(destinationContact: Contact): void {
+
+    const chatHistoryRequest: ChatHistoryRequest = {
+      destinationId: destinationContact.id
+    };
+
+    const request: RequestMessage = {
+      type: MessageType.CHAT_HISTORY,
+      token: this.sessionDetails.token,
+      payload: chatHistoryRequest
+    };
+
+    this.sendWebsocketMessage(request);
+  }
+
   requestContacts(): Observable<Array<Contact>> {
     const contactsRequestMessage: RequestMessage = {
       type: MessageType.CONTACTS_LIST,
@@ -325,6 +357,10 @@ export class ChatService {
 
   getMessagesObservable(): Observable<ChatMessage> {
     return this.messagesSubject;
+  }
+
+  getChatHistoryObservable(): Observable<ChatHistoryResponse> {
+    return this.chatHistorySubject;
   }
 
   private playPingPong(): void {

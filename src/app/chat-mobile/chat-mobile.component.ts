@@ -1,5 +1,5 @@
 import {AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild} from '@angular/core';
-import {ChatMessage, ChatService, Contact, DestinationType, MOBILE_MAX_WIDTH, SessionDetails} from '../chat.service';
+import {ChatHistoryResponse, ChatMessage, ChatService, Contact, DestinationType, MOBILE_MAX_WIDTH, SessionDetails} from '../chat.service';
 import {AppComponent} from '../app.component';
 import {Howl} from 'howler';
 
@@ -52,6 +52,12 @@ export class ChatMobileComponent implements OnInit, AfterViewInit {
         this.notifyReceivedMessage(message);
       });
 
+    this.chatService
+      .getChatHistoryObservable()
+      .subscribe(chatHistoryResponse => {
+        this.notifyReceivedChatHistory(chatHistoryResponse);
+      });
+
   }
 
   ngAfterViewInit(): void {
@@ -67,6 +73,13 @@ export class ChatMobileComponent implements OnInit, AfterViewInit {
   @HostListener('window:resize', ['$event'])
   onResize(event): void {
     this.checkMobileMode();
+  }
+
+  notifyReceivedChatHistory(chatHistory: ChatHistoryResponse): void {
+    this.mergeChatHistoryToHistory(
+      () => this.findContact(chatHistory.destinationId),
+      chatHistory
+    );
   }
 
   notifyReceivedMessage(message: ChatMessage): void {
@@ -105,6 +118,11 @@ export class ChatMobileComponent implements OnInit, AfterViewInit {
     destinationContact.chatHistory.push(message);
   }
 
+  mergeChatHistoryToHistory(findDestinationContactFunction: any, chatHistory: ChatHistoryResponse): void {
+    const destinationContact: Contact = findDestinationContactFunction();
+    destinationContact.chatHistory = chatHistory.chatHistory;
+  }
+
   /* View Methods  */
 
   sendMessage(message: string): void {
@@ -118,6 +136,7 @@ export class ChatMobileComponent implements OnInit, AfterViewInit {
   }
 
   openContact(contact: Contact): void {
+    this.chatService.requestChatHistory(contact);
     this.selectContact(contact);
     this.listMode = false;
   }
