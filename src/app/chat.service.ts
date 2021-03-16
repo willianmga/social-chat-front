@@ -3,6 +3,7 @@ import { Observable, Subject, BehaviorSubject, interval } from 'rxjs';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
 import { environment } from '../environments/environment';
 import { Router } from '@angular/router';
+import {HttpClient} from '@angular/common/http';
 
 export enum MessageType {
   CONTACTS_LIST = 'CONTACTS_LIST',
@@ -59,18 +60,36 @@ export interface ResponseMessage {
   payload?: any;
 }
 
+export enum MimeType {
+  TEXT = 'TEXT'
+}
+
 export interface ChatMessage {
   id?: string;
   from?: string;
   destinationType: DestinationType;
   destinationId: string;
-  message: string;
+  content: string;
+  mimeType: MimeType;
   date?: Date;
+}
+
+export interface ScreenResolution {
+  width: string;
+  height: string;
+  orientation: string;
+}
+
+export interface UserDeviceDetails {
+  userIp: string;
+  userAgent: string;
+  screenResolution: ScreenResolution;
 }
 
 export interface LoginRequest {
   username: string;
   password: string;
+  userDeviceDetails: UserDeviceDetails;
 }
 
 export interface LoginResponse {
@@ -135,7 +154,7 @@ export class ChatService {
   private sessionDetails: SessionDetails;
   private localStorage: Storage;
 
-  constructor(private router: Router) {
+  constructor(private router: Router, private httpClient: HttpClient) {
     this.localStorage = window.localStorage;
     this.openWebSocketConnection();
   }
@@ -250,7 +269,8 @@ export class ChatService {
       from: this.sessionDetails.loggedInUser.id,
       destinationType,
       destinationId: destinationContact.id,
-      message
+      content: message,
+      mimeType: MimeType.TEXT
     };
 
     const newMessage: RequestMessage = {
@@ -272,6 +292,10 @@ export class ChatService {
 
     this.chatServerWebSocket.next(contactsRequestMessage);
     return this.contactsSubject;
+  }
+
+  getIp(): Observable<any> {
+    return this.httpClient.get('http://api.ipify.org/?format=json');
   }
 
   registerSession(session: SessionDetails): void {

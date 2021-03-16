@@ -60,7 +60,7 @@
             *ngIf="isGroupMessage(chatMessage) && isReceivedMessage(chatMessage)">{{ getSenderName(chatMessage) }}</p>
 
           <mat-card-content
-            [style.text-align]="isReceivedMessage(chatMessage) ? 'left' : 'right'">{{chatMessage.message}}</mat-card-content>
+            [style.text-align]="isReceivedMessage(chatMessage) ? 'left' : 'right'">{{chatMessage.content}}</mat-card-content>
 
         </mat-card>
       </div>

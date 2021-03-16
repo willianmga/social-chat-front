@@ -152,7 +152,7 @@ export class ChatMobileComponent implements OnInit, AfterViewInit {
 
   // TODO: find proper last message received
   getLastReceivedMessage(contact: Contact): string {
-    return contact.chatHistory[contact.chatHistory.length - 1]?.message;
+    return contact.chatHistory[contact.chatHistory.length - 1]?.content;
   }
 
   // TODO: find whether there's unread message properly

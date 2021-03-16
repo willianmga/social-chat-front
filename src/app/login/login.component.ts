@@ -26,7 +26,16 @@ export class LoginComponent implements OnInit {
 
     const loginRequest: LoginRequest = {
       username,
-      password
+      password,
+      userDeviceDetails: {
+        userIp: '10.198.10.2',
+        userAgent: window.navigator?.userAgent,
+        screenResolution: {
+          width: window.innerWidth?.toString(),
+          height: window.innerHeight?.toString(),
+          orientation: window.orientation?.toString()
+        }
+      }
     };
 
     this.chatService
