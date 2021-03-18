@@ -287,7 +287,8 @@ export class ChatService {
       destinationType,
       destinationId: destinationContact.id,
       content: message,
-      mimeType: MimeType.TEXT
+      mimeType: MimeType.TEXT,
+      date: new Date()
     };
 
     const newMessage: RequestMessage = {

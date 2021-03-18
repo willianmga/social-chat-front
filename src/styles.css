@@ -9,9 +9,15 @@ body {
 }
 
 :root {
+  --toolbar-color: #400d40;
+  --contacts-bar-color: #4a154b;
+  --selected-item-color: #1264a3;
+  --toolbar-fixed-height: 56px;
   --mobile-max-width-size: 450px;
   --background-color: #303030;
-  --toolbar-fixed-height: 56px;
+  --old-chat-history-background-color: #CED0CE;
+  --chat-history-background-color: whitesmoke;
+  --primary-color: #7b1fa2;
 }
 
 .errorMessageBox {

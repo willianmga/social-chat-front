@@ -43,7 +43,7 @@ export class ChatMobileComponent implements OnInit, AfterViewInit {
       .requestContacts()
       .subscribe((response) => {
         response.forEach(contact => this.contacts.push(contact));
-        this.selectContact(this.contacts[0]);
+        // this.selectContact(this.contacts[0]);
       });
 
     this.chatService
@@ -105,8 +105,8 @@ export class ChatMobileComponent implements OnInit, AfterViewInit {
 
   findMessageSenderContact(message: ChatMessage): Contact {
     return (message.from === this.sessionDetails?.loggedInUser?.id)
-      ? this.sessionDetails?.loggedInUser?.id
-      : this.findContact(message.from);
+      ? this.findContact(this.sessionDetails?.loggedInUser?.id)
+      : this.findContact(message?.from);
   }
 
   findContact(contactId: string): Contact {
@@ -158,15 +158,27 @@ export class ChatMobileComponent implements OnInit, AfterViewInit {
   }
 
   getSenderName(message: ChatMessage): string {
+
     const senderContact: Contact = this.findMessageSenderContact(message);
 
-    if (senderContact !== undefined) {
-      return (senderContact.id === this.sessionDetails?.loggedInUser?.id)
-        ? 'You'
-        : senderContact.name;
-    }
+    return (senderContact !== undefined)
+      ? senderContact.name
+      : (message?.from === this.sessionDetails?.loggedInUser?.id)
+        ? this.sessionDetails?.loggedInUser?.name
+        : '';
 
-    return '';
+  }
+
+  getSenderAvatar(message: ChatMessage): string {
+
+    const senderContact: Contact = this.findMessageSenderContact(message);
+
+    return (senderContact !== undefined)
+      ? senderContact?.avatar
+      : (message.from === this.sessionDetails?.loggedInUser?.id)
+        ? this.sessionDetails?.loggedInUser?.avatar
+        : '';
+
   }
 
   // TODO: find proper last message received
@@ -194,7 +206,7 @@ export class ChatMobileComponent implements OnInit, AfterViewInit {
   showMessageHistory(): boolean {
     return (this.mobileMode)
       ? !this.listMode
-      : true;
+      : this.selectedContact !== undefined;
   }
 
   private checkMobileMode(): void {
