@@ -82,14 +82,15 @@
       <!-- Message Typing area -->
       <section class="type-message-container">
         <div class="message-type-area">
-          <mat-form-field style="width: 80%">
-            <mat-label>Message</mat-label>
-            <input #messageinput matInput matNativeControl (keyup.enter)="sendMessage(messageinput.value)" maxlength="280" placeholder="Type your message">
+
+          <mat-form-field appearance="fill" style="width: 100%; background-color: grey;">
+            <mat-label>Start typing</mat-label>
+            <input #messageinput matInput (keyup.enter)="sendMessage(messageinput.value)" placeholder="Type your message">
+            <button mat-icon-button matSuffix (click)="sendMessage(messageinput.value)" [attr.aria-label]="'Send'">
+              <mat-icon>send</mat-icon>
+            </button>
           </mat-form-field>
 
-          <button mat-icon-button (click)="sendMessage(messageinput.value)" style="margin-left: 20px;">
-            <mat-icon [inline]="true" class="mediumIcon">send</mat-icon>
-          </button>
         </div>
       </section>
 
