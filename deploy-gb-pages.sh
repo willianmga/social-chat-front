@@ -10,7 +10,7 @@ git checkout master
 git pull origin master
 
 # Tests the project
-ng test || { echo "Tests failed."; exit 1; };
+# ng test || { echo "Tests failed."; exit 1; };
 
 # push a new tag
 export newVersion=`npm version patch`
