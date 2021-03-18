@@ -64,7 +64,7 @@
       </section>
 
       <!-- Chat History -->
-      <section #chatHistoryContainer class="message-history-container">
+      <section #chatHistoryContainer #scrollMe [scrollTop]="scrollMe.scrollHeight" class="message-history-container">
 
         <div class="message-container" *ngFor="let chatMessage of selectedContact?.chatHistory">
           <div class="image">

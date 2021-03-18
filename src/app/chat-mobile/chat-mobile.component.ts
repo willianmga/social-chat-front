@@ -66,10 +66,6 @@ export class ChatMobileComponent implements OnInit, AfterViewInit {
     }, 1000);
   }
 
-  ngAfterViewChecked(): void {
-    this.scrollToBottom();
-  }
-
   @HostListener('window:resize', ['$event'])
   onResize(event): void {
     this.checkMobileMode();
@@ -131,7 +127,6 @@ export class ChatMobileComponent implements OnInit, AfterViewInit {
       this.notifySentMessage(sentMessage);
       this.messageinput.nativeElement.value = '';
       this.messageinput.nativeElement.focus();
-      this.scrollToBottom();
     }
   }
 
@@ -189,12 +184,6 @@ export class ChatMobileComponent implements OnInit, AfterViewInit {
   // TODO: find whether there's unread message properly
   hasUnreadMessage(contact: Contact): boolean {
     return contact.chatHistory.length > 0;
-  }
-
-  scrollToBottom(): void {
-    try {
-      this.chatHistoryContainer.nativeElement.scrollTop = this.chatHistoryContainer.nativeElement.scrollHeight;
-    } catch (err) {}
   }
 
   showContactsList(): boolean {
