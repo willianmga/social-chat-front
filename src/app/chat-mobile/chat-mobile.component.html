@@ -12,6 +12,7 @@
     <!-- Current User Details -->
     <mat-card *ngIf="!mobileMode" class="user-contact-card">
       <mat-card-header>
+        <img mat-card-avatar src="{{sessionDetails?.loggedInUser?.avatar}}"/>
         <mat-card-title>{{sessionDetails?.loggedInUser?.name}}</mat-card-title>
         <mat-card-subtitle>Online</mat-card-subtitle>
       </mat-card-header>
