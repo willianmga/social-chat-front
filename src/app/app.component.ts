@@ -1,8 +1,9 @@
 import {Component} from '@angular/core';
 import {Router} from '@angular/router';
 import {MatDialog} from '@angular/material/dialog';
-import {ChatService, SessionDetails} from './chat.service';
+import {ChatWebSocketService, SessionDetails} from './chat-web-socket.service';
 import {SystemInfoComponent} from './system-info/system-info.component';
+import {SessionService} from './service/session.service';
 
 @Component({
   selector: 'app-root',
@@ -14,13 +15,15 @@ export class AppComponent {
   title = 'SocialChat';
   sessionDetails: SessionDetails;
 
-
-  constructor(private chatService: ChatService, private router: Router, private systemInfoDialog: MatDialog) {
+  constructor(private router: Router,
+              private chatService: ChatWebSocketService,
+              private sessionService: SessionService,
+              private systemInfoDialog: MatDialog) {
     this.loadSession();
   }
 
   loadSession(): void {
-    this.chatService
+    this.sessionService
       .getSessionDetailsObservable()
       .subscribe(sessionDetails => {
         this.sessionDetails = sessionDetails;
@@ -28,7 +31,7 @@ export class AppComponent {
   }
 
   logout(): void {
-    this.chatService.logoff();
+    this.sessionService.logoff();
     this.router.navigate(['/login']);
   }
 

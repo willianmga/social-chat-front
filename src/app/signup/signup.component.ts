@@ -1,6 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
-import {ChatService, ResponseStatus, SessionDetails} from '../chat.service';
+import {ResponseStatus, SessionDetails} from '../chat-web-socket.service';
+import {SignupService} from '../service/signup.service';
+import {SessionService} from '../service/session.service';
 
 @Component({
   selector: 'app-signup',
@@ -14,7 +16,9 @@ export class SignupComponent implements OnInit {
   error = false;
   errorMessage?: string;
 
-  constructor(private chatService: ChatService, private router: Router) { }
+  constructor(private router: Router,
+              private signUpService: SignupService,
+              private sessionService: SessionService) { }
 
   ngOnInit(): void {
   }
@@ -24,7 +28,7 @@ export class SignupComponent implements OnInit {
     this.signingUp = true;
     this.error = false;
 
-    this.chatService
+    this.signUpService
       .signup(name, username, password)
       .subscribe((signupResponse) => {
 
@@ -36,7 +40,7 @@ export class SignupComponent implements OnInit {
             loggedInUser: signupResponse.user
           };
 
-          this.chatService.registerSession(sessionDetails);
+          this.sessionService.registerSession(sessionDetails);
           this.router.navigate(['/chat']);
 
         } else {

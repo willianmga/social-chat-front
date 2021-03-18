@@ -4,13 +4,16 @@ import {
   ChatConnectionStatus,
   ChatHistoryResponse,
   ChatMessage,
-  ChatService,
+  ChatWebSocketService,
   Contact,
   DestinationType,
   MOBILE_MAX_WIDTH,
   SessionDetails
-} from '../chat.service';
+} from '../chat-web-socket.service';
 import {Howl} from 'howler';
+import {ContactService} from '../service/contact.service';
+import {ChatMessageService} from '../service/chat-message.service';
+import {SessionService} from '../service/session.service';
 
 @Component({
   selector: 'app-chat-mobile',
@@ -22,6 +25,7 @@ export class ChatMobileComponent implements OnInit {
   connectionStatus: ChatConnectionStatus;
   mobileMode: boolean;
   dataLoadFinished: boolean;
+  needsDataReload = false;
   listMode: boolean;
   sessionDetails: SessionDetails;
   selectedContact: Contact;
@@ -31,7 +35,11 @@ export class ChatMobileComponent implements OnInit {
   @ViewChild('messageinput') messageinput;
   @ViewChild('chatHistoryContainer') private chatHistoryContainer: ElementRef;
 
-  constructor(private chatService: ChatService, private _snackBar: MatSnackBar) {
+  constructor(private chatService: ChatWebSocketService,
+              private sessionService: SessionService,
+              private contactService: ContactService,
+              private chatMessageService: ChatMessageService,
+              private _snackBar: MatSnackBar) {
     this.dataLoadFinished = false;
     this.listMode = true;
     this.player = new Howl({
@@ -40,40 +48,51 @@ export class ChatMobileComponent implements OnInit {
   }
 
   ngOnInit(): void {
-
     this.checkMobileMode();
+    this.loadChatData();
+  }
+
+  private loadChatData(): void {
 
     this.chatService
       .getConnectionStatusSubject()
       .subscribe(status => {
         this.connectionStatus = status;
         this.dataLoadFinished = true;
-      }, error => {
-        this._snackBar.open('Failed to connect to the server. You are offline.', 'ok', {
-          duration: 5000,
-          verticalPosition: 'top'
-        });
+
+        if (this.connectionStatus === ChatConnectionStatus.ONLINE && this.needsDataReload) {
+          this.needsDataReload = false;
+          this.loadChatData();
+        } else if (this.connectionStatus === ChatConnectionStatus.OFFLINE) {
+          this.needsDataReload = true;
+        }
       });
 
-    this.chatService
+    this.sessionService
       .getSessionDetailsObservable()
       .subscribe((sessionDetails) => {
         this.sessionDetails = sessionDetails;
       });
 
-    this.chatService
+    this.contactService
       .requestContacts()
       .subscribe((response) => {
-        response.forEach(contact => this.contacts.push(contact));
+        this.contacts = response;
       });
 
-    this.chatService
+    this.contactService
+      .newContactObservable()
+      .subscribe(newContact => {
+        this.contacts.push(newContact);
+      });
+
+    this.chatMessageService
       .getMessagesObservable()
       .subscribe((message) => {
         this.notifyReceivedMessage(message);
       });
 
-    this.chatService
+    this.chatMessageService
       .getChatHistoryObservable()
       .subscribe(chatHistoryResponse => {
         this.notifyReceivedChatHistory(chatHistoryResponse);
@@ -138,7 +157,7 @@ export class ChatMobileComponent implements OnInit {
 
   sendMessage(message: string): void {
     if (message !== undefined && message.trim() !== '') {
-      this.chatService
+      this.chatMessageService
         .sendMessage(message, this.selectedContact)
         .subscribe(requestMessage => {
           this.notifySentMessage(requestMessage.payload);
@@ -154,7 +173,7 @@ export class ChatMobileComponent implements OnInit {
   }
 
   openContact(contact: Contact): void {
-    this.chatService.requestChatHistory(contact);
+    this.chatMessageService.requestChatHistory(contact);
     this.selectContact(contact);
     this.listMode = false;
   }
