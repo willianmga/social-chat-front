@@ -7,11 +7,12 @@
 
       <div *ngIf="isLoggedIn()">
         <!-- Notifications Button -->
-        <button mat-icon-button  [matMenuTriggerFor]="notification" style="margin-right: 10px;">
-          <mat-icon [inline]="true" style="font-size: 30px;">notifications_none</mat-icon>
+        <button mat-icon-button [matMenuTriggerFor]="notification" style="margin-right: 10px;">
+          <mat-icon [inline]="true" style="font-size: 30px;" *ngIf="hasUnreadNotifications()">notifications_active</mat-icon>
+          <mat-icon [inline]="true" style="font-size: 30px;" *ngIf="!hasUnreadNotifications()">notifications_none</mat-icon>
         </button>
         <mat-menu #notification="matMenu">
-          <span mat-menu-item>No notifications to show</span>
+          <span mat-menu-item *ngFor="let notification of notifications">{{ notification.message }}</span>
         </mat-menu>
 
         <!-- Switch User Button -->

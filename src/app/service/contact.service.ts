@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {Observable, Subject} from 'rxjs';
 import {ChatWebSocketService, Contact, MessageType, RequestMessage} from '../chat-web-socket.service';
 import {SessionService} from './session.service';
+import {NotificationService} from './notification.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +13,8 @@ export class ContactService {
   private newContactSubject: Subject<Contact> = new Subject<Contact>();
 
   constructor(private chatService: ChatWebSocketService,
-              private sessionService: SessionService) {
+              private sessionService: SessionService,
+              private notificationService: NotificationService) {
     this.subscribe();
   }
 
@@ -24,7 +26,9 @@ export class ContactService {
         if (responseMessage.type === MessageType.CONTACTS_LIST) {
           this.contactsSubject.next(this.formatContacts(messagePayload));
         } else if (responseMessage.type === MessageType.NEW_CONTACT_REGISTERED) {
-          this.newContactSubject.next(this.formatContact(messagePayload));
+          const contact = this.formatContact(messagePayload);
+          this.notificationService.newContact(contact);
+          this.newContactSubject.next(contact);
         }
       });
   }
@@ -49,18 +53,22 @@ export class ContactService {
 
   private formatContact(contact: Contact): Contact {
     contact.chatHistory = [];
-    const splitName = contact.name.split(' ');
 
-    contact.name = (splitName.length > 1)
-      ? `${this.capitalize(splitName[0])} ${this.capitalize(splitName[splitName.length - 1])}`
-      : `${this.capitalize(splitName[0])}`;
+    try {
 
-    return contact;
+      const splitName = contact.name.split(' ');
+      contact.name = (splitName.length > 1)
+        ? `${this.capitalize(splitName[0])} ${this.capitalize(splitName[splitName.length - 1])}`
+        : `${this.capitalize(splitName[0])}`;
+      return contact;
+
+    } catch (e) {
+      return contact;
+    }
   }
 
   private capitalize(data: string): string {
     return data.charAt(0).toUpperCase() + data.slice(1);
   }
-
 
 }
