@@ -4,6 +4,7 @@ import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
 import { environment } from '../environments/environment';
 import { Router } from '@angular/router';
 import {HttpClient} from '@angular/common/http';
+import {normalizeFileReplacements} from '@angular-devkit/build-angular/src/utils';
 
 export enum MessageType {
   CONTACTS_LIST = 'CONTACTS_LIST',
@@ -132,6 +133,13 @@ export interface Contact {
   chatHistory?: Array<ChatMessage>;
 }
 
+export enum ChatConnectionStatus {
+  CONNECTING = 'Connecting...',
+  RECONNECTING = 'Reconnecting...',
+  ONLINE = 'Online',
+  OFFLINE = 'Offline'
+}
+
 export const MOBILE_MAX_WIDTH = 450;
 
 const pingMessage: RequestMessage = {
@@ -148,6 +156,7 @@ const loggedOffSessionDetails: SessionDetails = {
   loggedInUser: undefined
 };
 
+const MAX_RECONNECTION_TRIES = 3;
 const SESSION_KEY = 'session';
 
 @Injectable({
@@ -162,17 +171,22 @@ export class ChatService {
   private signupSubject: Subject<SignupResponse> = new Subject();
   private messagesSubject: Subject<ChatMessage> = new Subject<ChatMessage>();
   private chatHistorySubject: Subject<ChatHistoryResponse> = new Subject<ChatHistoryResponse>();
+  private connectionStatusSubject: BehaviorSubject<ChatConnectionStatus> = new BehaviorSubject<ChatConnectionStatus>(ChatConnectionStatus.OFFLINE);
   private sessionDetails: SessionDetails;
   private localStorage: Storage;
+  private reconnectionTries = 0;
+  private chatConnectionStatus: ChatConnectionStatus;
 
   constructor(private router: Router, private httpClient: HttpClient) {
     this.localStorage = window.localStorage;
     this.openWebSocketConnection();
   }
 
-  openWebSocketConnection(): void {
+  /* Web Socket Connection  */
 
+  private openWebSocketConnection(): void {
     this.loadSession();
+    this.updateConnectionStatus(ChatConnectionStatus.CONNECTING);
     this.sessionDetailsSubject.next(this.sessionDetails);
     this.chatServerWebSocket = webSocket<ResponseMessage>(`${environment.backendUrl}`);
     this.listenWebSocketMessages();
@@ -205,15 +219,73 @@ export class ChatService {
             this.unauthorizedOrClosed();
           }
 
+          this.updateConnectionStatus(ChatConnectionStatus.ONLINE);
         },
         (error) => {
-          if (this.chatServerWebSocket.isStopped) {
-            this.closeWebsocketConnection();
-            this.openWebSocketConnection();
-          }
+          this.tryReconnectWebSocketConnection();
         });
 
   }
+
+  private sendWebsocketMessage(message: RequestMessage): Observable<RequestMessage> {
+    return new Observable(subscriber => {
+      if (this.chatConnectionStatus !== ChatConnectionStatus.ONLINE) {
+        this.reconnectionTries = 0;
+        this.tryReconnectWebSocketConnection();
+        subscriber.error(new Error('Connection is closed.'));
+      } else {
+        this.chatServerWebSocket.next(message);
+        subscriber.next(message);
+        subscriber.complete();
+      }
+    });
+  }
+
+  private tryReconnectWebSocketConnection(): void {
+
+    this.updateConnectionStatus(ChatConnectionStatus.OFFLINE);
+
+    if (this.reconnectionTries < MAX_RECONNECTION_TRIES) {
+
+      this.updateConnectionStatus(ChatConnectionStatus.RECONNECTING);
+      this.reconnectionTries = this.reconnectionTries + 1;
+      console.error(`trying to reconnect (${this.reconnectionTries}/${MAX_RECONNECTION_TRIES})`);
+
+      this.closeWebsocketConnection();
+      this.openWebSocketConnection();
+
+    }
+
+  }
+
+  private closeWebsocketConnection(): void {
+    this.chatServerWebSocket.complete();
+  }
+
+  private updateConnectionStatus(status: ChatConnectionStatus): void {
+
+    this.chatConnectionStatus = status;
+
+    switch (status) {
+      case ChatConnectionStatus.ONLINE:
+        this.reconnectionTries = 0;
+        this.connectionStatusSubject.next(this.chatConnectionStatus);
+        break;
+      case ChatConnectionStatus.CONNECTING:
+        this.connectionStatusSubject.next(this.chatConnectionStatus);
+        break;
+      case ChatConnectionStatus.RECONNECTING:
+        this.connectionStatusSubject.next(this.chatConnectionStatus);
+        break;
+      case ChatConnectionStatus.OFFLINE:
+        this.connectionStatusSubject.next(this.chatConnectionStatus);
+        this.connectionStatusSubject.error(new Error('offline'));
+        break;
+    }
+
+  }
+
+  /* Web Socket Connection  */
 
   private loadSession(): void {
 
@@ -242,14 +314,6 @@ export class ChatService {
     return this.sessionDetails?.loggedIn;
   }
 
-  private closeWebsocketConnection(): void {
-    this.chatServerWebSocket.complete();
-  }
-
-  sendWebsocketMessage(message: any): void {
-    this.chatServerWebSocket.next(message);
-  }
-
   login(loginRequest: LoginRequest): Observable<LoginResponse> {
 
     const authenticateRequest: RequestMessage = {
@@ -276,7 +340,7 @@ export class ChatService {
     return this.signupSubject;
   }
 
-  sendMessage(message: string, destinationContact: Contact): ChatMessage {
+  sendMessage(message: string, destinationContact: Contact): Observable<RequestMessage> {
 
     const destinationType = (destinationContact.contactType === ContactType.USER)
       ? DestinationType.USER
@@ -297,9 +361,7 @@ export class ChatService {
       payload: chatMessage
     };
 
-    this.chatServerWebSocket.next(newMessage);
-
-    return chatMessage;
+    return this.sendWebsocketMessage(newMessage);
   }
 
   requestChatHistory(destinationContact: Contact): void {
@@ -314,7 +376,7 @@ export class ChatService {
       payload: chatHistoryRequest
     };
 
-    this.sendWebsocketMessage(request);
+    this.chatServerWebSocket.next(request);
   }
 
   requestContacts(): Observable<Array<Contact>> {
@@ -352,6 +414,10 @@ export class ChatService {
     this.openWebSocketConnection();
   }
 
+  getConnectionStatusSubject(): Observable<ChatConnectionStatus> {
+    return this.connectionStatusSubject;
+  }
+
   getSessionDetailsObservable(): Observable<SessionDetails> {
     return this.sessionDetailsSubject;
   }
@@ -380,8 +446,18 @@ export class ChatService {
     return contacts
       .map(contact => {
         contact.chatHistory = [];
+        const splitName = contact.name.split(' ');
+
+        contact.name = (splitName.length > 1)
+          ? `${this.capitalize(splitName[0])} ${this.capitalize(splitName[splitName.length - 1])}`
+          : `${this.capitalize(splitName[0])}`;
+
         return contact;
       });
+  }
+
+  private capitalize(data: string): string {
+    return data.charAt(0).toUpperCase() + data.slice(1);
   }
 
 }

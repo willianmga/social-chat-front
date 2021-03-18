@@ -1,6 +1,15 @@
-import {AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild} from '@angular/core';
-import {ChatHistoryResponse, ChatMessage, ChatService, Contact, DestinationType, MOBILE_MAX_WIDTH, SessionDetails} from '../chat.service';
-import {AppComponent} from '../app.component';
+import {Component, ElementRef, HostListener, OnInit, ViewChild} from '@angular/core';
+import {MatSnackBar} from '@angular/material/snack-bar';
+import {
+  ChatConnectionStatus,
+  ChatHistoryResponse,
+  ChatMessage,
+  ChatService,
+  Contact,
+  DestinationType,
+  MOBILE_MAX_WIDTH,
+  SessionDetails
+} from '../chat.service';
 import {Howl} from 'howler';
 
 @Component({
@@ -8,8 +17,9 @@ import {Howl} from 'howler';
   templateUrl: './chat-mobile.component.html',
   styleUrls: ['./chat-mobile.component.css']
 })
-export class ChatMobileComponent implements OnInit, AfterViewInit {
+export class ChatMobileComponent implements OnInit {
 
+  connectionStatus: ChatConnectionStatus;
   mobileMode: boolean;
   dataLoadFinished: boolean;
   listMode: boolean;
@@ -21,7 +31,7 @@ export class ChatMobileComponent implements OnInit, AfterViewInit {
   @ViewChild('messageinput') messageinput;
   @ViewChild('chatHistoryContainer') private chatHistoryContainer: ElementRef;
 
-  constructor(private chatService: ChatService, private appComponent: AppComponent) {
+  constructor(private chatService: ChatService, private _snackBar: MatSnackBar) {
     this.dataLoadFinished = false;
     this.listMode = true;
     this.player = new Howl({
@@ -34,6 +44,18 @@ export class ChatMobileComponent implements OnInit, AfterViewInit {
     this.checkMobileMode();
 
     this.chatService
+      .getConnectionStatusSubject()
+      .subscribe(status => {
+        this.connectionStatus = status;
+        this.dataLoadFinished = true;
+      }, error => {
+        this._snackBar.open('Failed to connect to the server. You are offline.', 'ok', {
+          duration: 5000,
+          verticalPosition: 'top'
+        });
+      });
+
+    this.chatService
       .getSessionDetailsObservable()
       .subscribe((sessionDetails) => {
         this.sessionDetails = sessionDetails;
@@ -43,7 +65,6 @@ export class ChatMobileComponent implements OnInit, AfterViewInit {
       .requestContacts()
       .subscribe((response) => {
         response.forEach(contact => this.contacts.push(contact));
-        // this.selectContact(this.contacts[0]);
       });
 
     this.chatService
@@ -58,12 +79,6 @@ export class ChatMobileComponent implements OnInit, AfterViewInit {
         this.notifyReceivedChatHistory(chatHistoryResponse);
       });
 
-  }
-
-  ngAfterViewInit(): void {
-    setTimeout(() => {
-      this.dataLoadFinished = true;
-    }, 1000);
   }
 
   @HostListener('window:resize', ['$event'])
@@ -122,11 +137,19 @@ export class ChatMobileComponent implements OnInit, AfterViewInit {
   /* View Methods  */
 
   sendMessage(message: string): void {
-    if (message !== undefined && message !== '') {
-      const sentMessage: ChatMessage = this.chatService.sendMessage(message, this.selectedContact);
-      this.notifySentMessage(sentMessage);
-      this.messageinput.nativeElement.value = '';
-      this.messageinput.nativeElement.focus();
+    if (message !== undefined && message.trim() !== '') {
+      this.chatService
+        .sendMessage(message, this.selectedContact)
+        .subscribe(requestMessage => {
+          this.notifySentMessage(requestMessage.payload);
+          this.messageinput.nativeElement.value = '';
+          this.messageinput.nativeElement.focus();
+        }, error => {
+          this._snackBar.open('You are offline. Your message was not sent.', 'ok', {
+            duration: 3000,
+            verticalPosition: 'top'
+          });
+        });
     }
   }
 
@@ -196,6 +219,23 @@ export class ChatMobileComponent implements OnInit, AfterViewInit {
     return (this.mobileMode)
       ? !this.listMode
       : this.selectedContact !== undefined;
+  }
+
+  loadIsFinished(): boolean {
+    return (this.connectionStatus === ChatConnectionStatus.ONLINE)
+      ? this.dataLoadFinished
+      : true;
+  }
+
+  connectionStatusLabelColor(): string {
+    switch (this.connectionStatus) {
+      case ChatConnectionStatus.ONLINE:
+        return 'green';
+      case ChatConnectionStatus.OFFLINE:
+        return 'red';
+      default:
+        return 'white';
+    }
   }
 
   private checkMobileMode(): void {
