@@ -49,7 +49,7 @@ export class SessionService {
 
   registerSession(session: SessionDetails): void {
     this.sessionDetails = session;
-    this.localStorage.setItem(SESSION_KEY, JSON.stringify(this.sessionDetails));
+    this.localStorage.setItem(SESSION_KEY, JSON.stringify(this.sessionDetails)); // TODO: don't save session details on local storage
     this.sessionDetailsSubject.next(this.sessionDetails);
   }
 

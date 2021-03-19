@@ -25,6 +25,8 @@ import { SystemInfoComponent } from './system-info/system-info.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ChatMobileComponent } from './chat-mobile/chat-mobile.component';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { ServiceWorkerModule } from '@angular/service-worker';
+import { environment } from '../environments/environment';
 
 @NgModule({
   declarations: [
@@ -54,7 +56,8 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
     MatMenuModule,
     MatDialogModule,
     MatProgressSpinnerModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })
   ],
   providers: [],
   bootstrap: [AppComponent]
