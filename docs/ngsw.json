@@ -1,0 +1,80 @@
+{
+  "configVersion": 1,
+  "timestamp": 1616180851729,
+  "index": "/reactive-chat-front/index.html",
+  "assetGroups": [
+    {
+      "name": "app",
+      "installMode": "prefetch",
+      "updateMode": "prefetch",
+      "cacheQueryOptions": {
+        "ignoreVary": true
+      },
+      "urls": [
+        "/reactive-chat-front/favicon.ico",
+        "/reactive-chat-front/index.html",
+        "/reactive-chat-front/main.1c41d82adf1329f18cbd.js",
+        "/reactive-chat-front/manifest.webmanifest",
+        "/reactive-chat-front/polyfills.35a5ca1855eb057f016a.js",
+        "/reactive-chat-front/runtime.acf0dec4155e77772545.js",
+        "/reactive-chat-front/styles.92eaf788b9363b77525f.css"
+      ],
+      "patterns": []
+    },
+    {
+      "name": "assets",
+      "installMode": "lazy",
+      "updateMode": "prefetch",
+      "cacheQueryOptions": {
+        "ignoreVary": true
+      },
+      "urls": [
+        "/reactive-chat-front/assets/icons/social-chat-logo-128x128.png",
+        "/reactive-chat-front/assets/icons/social-chat-logo-256x256.png",
+        "/reactive-chat-front/assets/icons/social-chat-logo-32x32.png",
+        "/reactive-chat-front/assets/icons/social-chat-logo-512x512.png",
+        "/reactive-chat-front/assets/icons/social-chat-logo-64x64.png",
+        "/reactive-chat-front/assets/icons/social-chat-logo-96x96.png",
+        "/reactive-chat-front/assets/logo.png",
+        "/reactive-chat-front/assets/notification.mp3"
+      ],
+      "patterns": []
+    }
+  ],
+  "dataGroups": [],
+  "hashTable": {
+    "/reactive-chat-front/assets/icons/social-chat-logo-128x128.png": "fce05e597ddcacb227013beb4630e229ff96a6e7",
+    "/reactive-chat-front/assets/icons/social-chat-logo-256x256.png": "2e57c4113d0508bd5062f2c33f4b7e0c4401dc8e",
+    "/reactive-chat-front/assets/icons/social-chat-logo-32x32.png": "0cb177750e1ed1af883157b879565be645110a04",
+    "/reactive-chat-front/assets/icons/social-chat-logo-512x512.png": "c52b794924e80c7fbe7cd6c06aca9a1b1dfc6064",
+    "/reactive-chat-front/assets/icons/social-chat-logo-64x64.png": "797d9ab6a7f03ec043f5885bf87929220903be1a",
+    "/reactive-chat-front/assets/icons/social-chat-logo-96x96.png": "9b9b841c9ed31ec806f8d6be7116edd40c1419c8",
+    "/reactive-chat-front/assets/logo.png": "c6579b7c5d0cdd05f28cce86f610a1452d9ea48b",
+    "/reactive-chat-front/assets/notification.mp3": "38da7d87cee22c562f47486f08ebb46c97ba4660",
+    "/reactive-chat-front/favicon.ico": "c0c55ef6d612d755539c7cb6d8bfe6d1c3d4d91e",
+    "/reactive-chat-front/index.html": "fba1a63e5358112556439db2f991b57a22ac6f0f",
+    "/reactive-chat-front/main.1c41d82adf1329f18cbd.js": "b84519a7157f5b7b80a2a7748690addf82647803",
+    "/reactive-chat-front/manifest.webmanifest": "e818b01660f3637afe1168e3568a9b912243d3ca",
+    "/reactive-chat-front/polyfills.35a5ca1855eb057f016a.js": "578360d24ce37383f261c7ef63b1f822d28e8dde",
+    "/reactive-chat-front/runtime.acf0dec4155e77772545.js": "a9aafcf49f49145093fc831efd9b8e2f6c71bb9c",
+    "/reactive-chat-front/styles.92eaf788b9363b77525f.css": "a141c6646c664adae9dd310826ce69bef33cbe87"
+  },
+  "navigationUrls": [
+    {
+      "positive": true,
+      "regex": "^\\/.*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*\\.[^/]*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*__[^/]*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*__[^/]*\\/.*$"
+    }
+  ]
+}
