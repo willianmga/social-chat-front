@@ -1,6 +1,6 @@
 {
   "configVersion": 1,
-  "timestamp": 1616180851729,
+  "timestamp": 1616211345545,
   "index": "/reactive-chat-front/index.html",
   "assetGroups": [
     {
@@ -13,7 +13,7 @@
       "urls": [
         "/reactive-chat-front/favicon.ico",
         "/reactive-chat-front/index.html",
-        "/reactive-chat-front/main.1c41d82adf1329f18cbd.js",
+        "/reactive-chat-front/main.37b4aa7ba93ec54ef9a6.js",
         "/reactive-chat-front/manifest.webmanifest",
         "/reactive-chat-front/polyfills.35a5ca1855eb057f016a.js",
         "/reactive-chat-front/runtime.acf0dec4155e77772545.js",
@@ -52,8 +52,8 @@
     "/reactive-chat-front/assets/logo.png": "c6579b7c5d0cdd05f28cce86f610a1452d9ea48b",
     "/reactive-chat-front/assets/notification.mp3": "38da7d87cee22c562f47486f08ebb46c97ba4660",
     "/reactive-chat-front/favicon.ico": "c0c55ef6d612d755539c7cb6d8bfe6d1c3d4d91e",
-    "/reactive-chat-front/index.html": "fba1a63e5358112556439db2f991b57a22ac6f0f",
-    "/reactive-chat-front/main.1c41d82adf1329f18cbd.js": "b84519a7157f5b7b80a2a7748690addf82647803",
+    "/reactive-chat-front/index.html": "30f0179675e5c6b629a860e4f9464217af8165e2",
+    "/reactive-chat-front/main.37b4aa7ba93ec54ef9a6.js": "dc976a6122cbf481606e144f421012757ff6df17",
     "/reactive-chat-front/manifest.webmanifest": "e818b01660f3637afe1168e3568a9b912243d3ca",
     "/reactive-chat-front/polyfills.35a5ca1855eb057f016a.js": "578360d24ce37383f261c7ef63b1f822d28e8dde",
     "/reactive-chat-front/runtime.acf0dec4155e77772545.js": "a9aafcf49f49145093fc831efd9b8e2f6c71bb9c",
