@@ -106,6 +106,7 @@ export interface SignupResponse {
 
 export interface ChatHistoryRequest {
   destinationId: string;
+  lastMessageId?: string;
 }
 
 export interface ChatHistoryResponse {
@@ -127,6 +128,7 @@ export interface Contact {
   description: string;
   contactType: ContactType;
   avatar: string;
+  chatHistoryLoaded: boolean;
   chatHistory?: Array<ChatMessage>;
 }
 

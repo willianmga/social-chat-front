@@ -53,6 +53,7 @@ export class ContactService {
 
   private formatContact(contact: Contact): Contact {
     contact.chatHistory = [];
+    contact.chatHistoryLoaded = false;
 
     try {
 

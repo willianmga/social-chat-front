@@ -52,6 +52,10 @@ export class ChatMobileComponent implements OnInit {
     this.loadChatData();
   }
 
+  ngAfterViewChecked(): void {
+    this.scrollToBottom();
+  }
+
   private loadChatData(): void {
 
     this.chatService
@@ -148,9 +152,28 @@ export class ChatMobileComponent implements OnInit {
     destinationContact.chatHistory.push(message);
   }
 
-  mergeChatHistoryToHistory(findDestinationContactFunction: any, chatHistory: ChatHistoryResponse): void {
+  mergeChatHistoryToHistory(findDestinationContactFunction: any, chatHistoryResponse: ChatHistoryResponse): void {
     const destinationContact: Contact = findDestinationContactFunction();
-    destinationContact.chatHistory = chatHistory.chatHistory;
+
+    const newMessages: Array<ChatMessage> = chatHistoryResponse
+      .chatHistory
+      .filter(chatMessage => destinationContact.chatHistory
+        .filter(message => message.id === chatMessage.id).length === 0
+      );
+
+    const existingMessages: Array<ChatMessage> = newMessages.concat(destinationContact.chatHistory);
+    destinationContact.chatHistory = this.sortChatMessageByDate(existingMessages);
+  }
+
+  private sortChatMessageByDate(existingMessages: Array<ChatMessage>): Array<ChatMessage> {
+    return existingMessages.sort((m1, m2) => {
+      if (m1.date > m2.date) {
+        return 1;
+      } else if (m1.date < m2.date) {
+        return -1;
+      }
+      return 0;
+    });
   }
 
   /* View Methods  */
@@ -173,7 +196,10 @@ export class ChatMobileComponent implements OnInit {
   }
 
   openContact(contact: Contact): void {
-    this.chatMessageService.requestChatHistory(contact);
+    if (!contact.chatHistoryLoaded) {
+      contact.chatHistoryLoaded = true;
+      this.chatMessageService.requestChatHistory(contact);
+    }
     this.selectContact(contact);
     this.listMode = false;
   }
@@ -255,6 +281,12 @@ export class ChatMobileComponent implements OnInit {
       default:
         return 'white';
     }
+  }
+
+  private scrollToBottom(): void {
+    try {
+      this.chatHistoryContainer.nativeElement.scrollTop = this.chatHistoryContainer.nativeElement.scrollHeight;
+    } catch (err) {}
   }
 
   private checkMobileMode(): void {

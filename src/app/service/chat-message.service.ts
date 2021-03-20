@@ -73,6 +73,10 @@ export class ChatMessageService {
       destinationId: destinationContact.id
     };
 
+    if (destinationContact.chatHistory.length > 0) {
+      chatHistoryRequest.lastMessageId = destinationContact?.chatHistory[0]?.id;
+    }
+
     const request: RequestMessage = {
       type: MessageType.CHAT_HISTORY,
       token: this.sessionService.getToken(),
