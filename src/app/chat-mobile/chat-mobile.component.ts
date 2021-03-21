@@ -49,7 +49,10 @@ export class ChatMobileComponent implements OnInit {
 
   ngOnInit(): void {
     this.checkMobileMode();
-    this.loadChatData();
+    setTimeout(() => {
+      this.loadChatData();
+    }, 5000);
+
   }
 
   ngAfterViewChecked(): void {
@@ -59,47 +62,53 @@ export class ChatMobileComponent implements OnInit {
   private loadChatData(): void {
 
     this.chatService
-      .getConnectionStatusSubject()
-      .subscribe(status => {
-        this.connectionStatus = status;
-        this.dataLoadFinished = true;
+      .openConnection()
+      .subscribe(() => {
 
-        if (this.connectionStatus === ChatConnectionStatus.ONLINE && this.needsDataReload) {
-          this.needsDataReload = false;
-          this.loadChatData();
-        } else if (this.connectionStatus === ChatConnectionStatus.OFFLINE) {
-          this.needsDataReload = true;
-        }
-      });
+        this.chatService
+          .getConnectionStatusSubject()
+          .subscribe(status => {
+            this.connectionStatus = status;
+            this.dataLoadFinished = true;
 
-    this.sessionService
-      .getSessionDetailsObservable()
-      .subscribe((sessionDetails) => {
-        this.sessionDetails = sessionDetails;
-      });
+            if (this.connectionStatus === ChatConnectionStatus.ONLINE && this.needsDataReload) {
+              this.needsDataReload = false;
+              this.loadChatData();
+            } else if (this.connectionStatus === ChatConnectionStatus.OFFLINE) {
+              this.needsDataReload = true;
+            }
+          });
 
-    this.contactService
-      .requestContacts()
-      .subscribe((response) => {
-        this.contacts = response;
-      });
+        this.sessionService
+          .getSessionDetailsObservable()
+          .subscribe((sessionDetails) => {
+            this.sessionDetails = sessionDetails;
+          });
 
-    this.contactService
-      .newContactObservable()
-      .subscribe(newContact => {
-        this.contacts.push(newContact);
-      });
+        this.contactService
+          .requestContacts()
+          .subscribe((response) => {
+            this.contacts = response;
+          });
 
-    this.chatMessageService
-      .getMessagesObservable()
-      .subscribe((message) => {
-        this.notifyReceivedMessage(message);
-      });
+        this.contactService
+          .newContactObservable()
+          .subscribe(newContact => {
+            this.contacts.push(newContact);
+          });
 
-    this.chatMessageService
-      .getChatHistoryObservable()
-      .subscribe(chatHistoryResponse => {
-        this.notifyReceivedChatHistory(chatHistoryResponse);
+        this.chatMessageService
+          .getMessagesObservable()
+          .subscribe((message) => {
+            this.notifyReceivedMessage(message);
+          });
+
+        this.chatMessageService
+          .getChatHistoryObservable()
+          .subscribe(chatHistoryResponse => {
+            this.notifyReceivedChatHistory(chatHistoryResponse);
+          });
+
       });
 
   }

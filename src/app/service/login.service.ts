@@ -1,40 +1,24 @@
 import {Injectable} from '@angular/core';
-import {ChatWebSocketService, LoginRequest, LoginResponse, MessageType} from '../chat-web-socket.service';
-import {Observable, Subject} from 'rxjs';
+import {LoginRequest, LoginResponse} from '../chat-web-socket.service';
+import {Observable} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
+import {environment} from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LoginService {
 
-  private loginSubject: Subject<LoginResponse> = new Subject();
-
-  constructor(private chatService: ChatWebSocketService,
-              private httpClient: HttpClient) {
-    this.subscribe();
-  }
-
-  private subscribe(): void {
-    this.chatService
-      .getWebSocketObservable()
-      .subscribe(responseMessage => {
-        const messagePayload = responseMessage.payload;
-        if (responseMessage.type === MessageType.AUTHENTICATE) {
-          this.loginSubject.next(messagePayload);
-        }
-      });
-  }
+  constructor(private httpClient: HttpClient) {}
 
   login(loginRequest: LoginRequest): Observable<LoginResponse> {
+    return this.httpClient
+      .post<LoginResponse>(`${environment.authServiceUrl}/v1/auth`, loginRequest);
+  }
 
-    this.chatService
-      .sendWebSocketMessage({
-        type: MessageType.AUTHENTICATE,
-        payload: loginRequest
-      });
-
-    return this.loginSubject;
+  test(): Observable<any> {
+    return this.httpClient
+      .get<any>(`${environment.authServiceUrl}/v1/auth`);
   }
 
   getIp(): Observable<any> {
