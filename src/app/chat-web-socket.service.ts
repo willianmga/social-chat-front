@@ -161,14 +161,30 @@ export class ChatWebSocketService {
   constructor() {
     this.connStatusSubject = new BehaviorSubject<ChatConnectionStatus>(ChatConnectionStatus.OFFLINE);
     this.chatServerWebSocketSubject = new Subject<ResponseMessage>();
-    this.openWebSocketConnection();
-    this.monitorConnection();
   }
 
-  openWebSocketConnection(): void {
+  openWebSocketConnection(): Observable<any> {
     this.updateConnectionStatus(ChatConnectionStatus.CONNECTING);
-    this.chatServerWebSocket = webSocket<ResponseMessage>(`${environment.backendUrl}`);
+
+    this.chatServerWebSocket = webSocket<ResponseMessage>({
+      url: `${environment.backendUrl}`
+      // protocol: ['mycookie', 'value']
+    });
+
     this.listenWebSocketMessages();
+    return this.chatServerWebSocket;
+  }
+
+  openConnection(): Observable<void> {
+    return new Observable(subscriber => {
+      this.openWebSocketConnection()
+        .subscribe(connection => {
+          subscriber.complete();
+        },
+            error => {
+          subscriber.error('failed to open connection');
+        });
+    });
   }
 
   closeWebsocketConnection(): void {
@@ -211,9 +227,9 @@ export class ChatWebSocketService {
       .subscribe((responseMessage) => {
         this.chatServerWebSocketSubject.next(responseMessage);
         this.updateConnectionStatus(ChatConnectionStatus.ONLINE);
-      },
-      () => this.tryReconnectWebSocketConnection()
-      );
+        // },
+        // () => ''//this.tryReconnectWebSocketConnection()
+      });
   }
 
   private monitorConnection(): void {
