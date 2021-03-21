@@ -18,7 +18,7 @@ export newVersion=`npm version patch`
 # Packages source code
 git checkout gb-pages-release
 git pull --rebase origin master
-ng build --base-href $BASE_HREF
+ng build --prod --base-href $BASE_HREF
 docker build -t $APPNAME:latest .
 
 # commits changes to release branch
