@@ -1,5 +1,5 @@
 export const environment = {
   production: true,
-  backendUrl: 'ws://socialchat.live/ws/chat',
-  authServiceUrl: 'http://socialchat.live/api'
+  backendUrl: 'ws://www.socialchat.live/ws/chat',
+  authServiceUrl: 'http://www.socialchat.live/api'
 };
