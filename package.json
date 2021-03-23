@@ -1,7 +1,7 @@
 {
   "name": "reactive-chat-front",
   "description": "The chat that helps you know others",
-  "version": "2.1.4",
+  "version": "2.1.5",
   "repository": {
     "directory": "GitHub",
     "type": "git",
