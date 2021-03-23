@@ -4,8 +4,8 @@
 
 export const environment = {
   production: false,
-  backendUrl: 'wss://127.0.0.1:8080/chat',
-  authServiceUrl: 'https://127.0.0.1:8081'
+  backendUrl: 'wss://dev-server.com/ws/chat',
+  authServiceUrl: 'https://dev-server.com/api'
 };
 
 /*

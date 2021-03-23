@@ -18,7 +18,7 @@ export class LoginService {
 
   test(): Observable<any> {
     return this.httpClient
-      .get<any>(`${environment.authServiceUrl}/v1/auth`);
+      .post<any>(`${environment.authServiceUrl}/v1/auth/test`, {});
   }
 
   getIp(): Observable<any> {
