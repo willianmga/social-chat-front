@@ -49,10 +49,7 @@ export class ChatMobileComponent implements OnInit {
 
   ngOnInit(): void {
     this.checkMobileMode();
-    setTimeout(() => {
-      this.loadChatData();
-    }, 5000);
-
+    this.loadChatData();
   }
 
   ngAfterViewChecked(): void {

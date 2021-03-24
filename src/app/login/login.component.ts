@@ -46,12 +46,6 @@ export class LoginComponent implements OnInit {
       .login(loginRequest)
       .subscribe(loginResponse => {
 
-        this.loginService
-          .test()
-          .subscribe(result => {
-            console.log(result);
-          });
-
         if (loginResponse.status === ResponseStatus.SUCCESS) {
 
           const sessionDetails: SessionDetails = {
