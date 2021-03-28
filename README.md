@@ -23,4 +23,5 @@ https://www.socialchat.live/
 * Create app logo so that it can be used as icon
 
 ## BACK-END
-https://github.com/willianmga/reactive-chat-back
+* Authentication Server: https://github.com/willianmga/reactive-chat-auth-service
+* Chat Server: https://github.com/willianmga/reactive-chat-back
