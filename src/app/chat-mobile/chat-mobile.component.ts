@@ -4,15 +4,15 @@ import {
   ChatConnectionStatus,
   ChatHistoryResponse,
   ChatMessage,
-  ChatWebSocketService,
+  WebSocketChatServerService,
   Contact,
   DestinationType,
   MOBILE_MAX_WIDTH,
   SessionDetails
-} from '../chat-web-socket.service';
+} from '../service/web-socket-chat-server.service';
 import {Howl} from 'howler';
 import {ContactService} from '../service/contact.service';
-import {ChatMessageService} from '../service/chat-message.service';
+import {MessagesService} from '../service/messages.service';
 import {SessionService} from '../service/session.service';
 
 @Component({
@@ -35,10 +35,10 @@ export class ChatMobileComponent implements OnInit {
   @ViewChild('messageinput') messageinput;
   @ViewChild('chatHistoryContainer') private chatHistoryContainer: ElementRef;
 
-  constructor(private chatService: ChatWebSocketService,
+  constructor(private chatService: WebSocketChatServerService,
               private sessionService: SessionService,
               private contactService: ContactService,
-              private chatMessageService: ChatMessageService,
+              private chatMessageService: MessagesService,
               private _snackBar: MatSnackBar) {
     this.dataLoadFinished = false;
     this.listMode = true;
@@ -59,53 +59,47 @@ export class ChatMobileComponent implements OnInit {
   private loadChatData(): void {
 
     this.chatService
-      .openConnection()
-      .subscribe(() => {
+      .getConnectionStatusSubject()
+      .subscribe(status => {
+        this.connectionStatus = status;
+        this.dataLoadFinished = true;
 
-        this.chatService
-          .getConnectionStatusSubject()
-          .subscribe(status => {
-            this.connectionStatus = status;
-            this.dataLoadFinished = true;
+        if (this.connectionStatus === ChatConnectionStatus.ONLINE && this.needsDataReload) {
+          this.needsDataReload = false;
+          this.loadChatData();
+        } else if (this.connectionStatus === ChatConnectionStatus.OFFLINE) {
+          this.needsDataReload = true;
+        }
+      });
 
-            if (this.connectionStatus === ChatConnectionStatus.ONLINE && this.needsDataReload) {
-              this.needsDataReload = false;
-              this.loadChatData();
-            } else if (this.connectionStatus === ChatConnectionStatus.OFFLINE) {
-              this.needsDataReload = true;
-            }
-          });
+    this.sessionService
+      .getSessionDetailsObservable()
+      .subscribe((sessionDetails) => {
+        this.sessionDetails = sessionDetails;
+      });
 
-        this.sessionService
-          .getSessionDetailsObservable()
-          .subscribe((sessionDetails) => {
-            this.sessionDetails = sessionDetails;
-          });
+    this.contactService
+      .requestContacts()
+      .subscribe((response) => {
+        this.contacts = response;
+      });
 
-        this.contactService
-          .requestContacts()
-          .subscribe((response) => {
-            this.contacts = response;
-          });
+    this.contactService
+      .newContactObservable()
+      .subscribe(newContact => {
+        this.contacts.push(newContact);
+      });
 
-        this.contactService
-          .newContactObservable()
-          .subscribe(newContact => {
-            this.contacts.push(newContact);
-          });
+    this.chatMessageService
+      .getMessagesObservable()
+      .subscribe((message) => {
+        this.notifyReceivedMessage(message);
+      });
 
-        this.chatMessageService
-          .getMessagesObservable()
-          .subscribe((message) => {
-            this.notifyReceivedMessage(message);
-          });
-
-        this.chatMessageService
-          .getChatHistoryObservable()
-          .subscribe(chatHistoryResponse => {
-            this.notifyReceivedChatHistory(chatHistoryResponse);
-          });
-
+    this.chatMessageService
+      .getChatHistoryObservable()
+      .subscribe(chatHistoryResponse => {
+        this.notifyReceivedChatHistory(chatHistoryResponse);
       });
 
   }

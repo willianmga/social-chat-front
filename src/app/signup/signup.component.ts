@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
-import {ResponseStatus, SessionDetails} from '../chat-web-socket.service';
+import {ResponseStatus} from '../service/web-socket-chat-server.service';
 import {SignupService} from '../service/signup.service';
 import {SessionService} from '../service/session.service';
 
@@ -33,16 +33,8 @@ export class SignupComponent implements OnInit {
       .subscribe((signupResponse) => {
 
         if (signupResponse.status === ResponseStatus.SUCCESS) {
-
-          const sessionDetails: SessionDetails = {
-            loggedIn: true,
-            token: signupResponse.token,
-            loggedInUser: signupResponse.user
-          };
-
-          this.sessionService.registerSession(sessionDetails);
+          this.sessionService.registerSession(signupResponse.user);
           this.router.navigate(['/chat']);
-
         } else {
           this.signingUp = false;
           this.errorMessage = this.getErrorMessage(signupResponse.status);

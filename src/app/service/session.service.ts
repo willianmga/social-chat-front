@@ -1,16 +1,11 @@
 import {Injectable} from '@angular/core';
 import {BehaviorSubject, Observable} from 'rxjs';
-import {ChatWebSocketService, MessageType, RequestMessage, SessionDetails} from '../chat-web-socket.service';
+import {MessageType, SessionDetails, User, WebSocketChatServerService} from './web-socket-chat-server.service';
 import {Router} from '@angular/router';
 
 const loggedOffSessionDetails: SessionDetails = {
   loggedIn: false,
-  token: undefined,
   loggedInUser: undefined
-};
-
-const logoffMessage: RequestMessage = {
-  type: MessageType.LOGOFF
 };
 
 const SESSION_KEY = 'session';
@@ -25,41 +20,25 @@ export class SessionService {
   private localStorage: Storage;
 
   constructor(private router: Router,
-              private chatService: ChatWebSocketService) {
+              private chatService: WebSocketChatServerService) {
     this.sessionDetailsSubject = new BehaviorSubject<SessionDetails>(loggedOffSessionDetails);
     this.localStorage = window.localStorage;
-    this.subscribe();
-    this.openSession();
+    this.tryRestoreSessionFromLocalStorage();
   }
 
-  subscribe(): void {
-    this.chatService
-      .getWebSocketObservable()
-      .subscribe(responseMessage => {
-        if (responseMessage.type === MessageType.NOT_AUTHENTICATED) {
-          this.unauthorizedOrClosed();
-        }
-      });
-  }
-
-  openSession(): void {
-    this.sessionDetailsSubject.next(this.sessionDetails);
-    this.loadFromLocalStorage();
-  }
-
-  registerSession(session: SessionDetails): void {
-    this.sessionDetails = session;
-    this.localStorage.setItem(SESSION_KEY, JSON.stringify(this.sessionDetails)); // TODO: don't save session details on local storage
-    this.sessionDetailsSubject.next(this.sessionDetails);
+  registerSession(user: User): void {
+    this.sessionDetails = {
+      loggedIn: true,
+      loggedInUser: user
+    };
+    const base64Encoded = btoa(JSON.stringify(this.sessionDetails));
+    this.localStorage.setItem(SESSION_KEY, base64Encoded);
+    this.startSessionConnection();
   }
 
   logoff(): void {
-    this.deregisterSession();
-    this.chatService.resetConnection();
-  }
-
-  getToken(): string {
-    return this.sessionDetails?.token;
+    this.deregisterSessionAndCloseConnection();
+    this.chatService.closeWebsocketConnection();
   }
 
   getSessionDetails(): SessionDetails {
@@ -74,26 +53,61 @@ export class SessionService {
     return this.sessionDetailsSubject;
   }
 
-  private loadFromLocalStorage(): void {
-    const sessionJson: string = this.localStorage.getItem(SESSION_KEY);
-    this.sessionDetails = (sessionJson !== undefined)
-      ? JSON.parse(sessionJson)
-      : loggedOffSessionDetails;
-    this.sessionDetailsSubject.next(this.sessionDetails);
+  private unauthorizedOrClosed(): void {
+    this.deregisterSessionAndCloseConnection();
+    this.router.navigate(['/login']);
   }
 
-  private deregisterSession(): void {
-    this.chatService.sendWebSocketMessage(logoffMessage);
+  private startSessionConnection(): void {
+    this.sessionDetailsSubject.next(this.sessionDetails);
+    this.chatService.openConnection()
+      .subscribe(() => {
+          this.watchWebSocketSession();
+        },
+        error => {
+          this.deregisterSessionAndCloseConnection();
+          console.error('clearing session due to error when opening connection');
+        });
+  }
+
+  private watchWebSocketSession(): void {
+    this.chatService
+      .getWebSocketObservable()
+      .subscribe(responseMessage => {
+        if (responseMessage.type === MessageType.NOT_AUTHENTICATED) {
+          this.unauthorizedOrClosed();
+        }
+      });
+  }
+
+  private tryRestoreSessionFromLocalStorage(): void {
+    this.loadFromLocalStorage()
+      .subscribe(sessionDetails => {
+          this.sessionDetails = sessionDetails;
+          this.startSessionConnection();
+        },
+        error => {
+          this.deregisterSessionAndCloseConnection();
+        });
+  }
+
+  private loadFromLocalStorage(): Observable<SessionDetails> {
+    return new Observable(subscriber => {
+      try {
+        const sessionBase64: string = this.localStorage.getItem(SESSION_KEY);
+        const sessionDetails: SessionDetails = JSON.parse(atob(sessionBase64));
+        subscriber.next(sessionDetails);
+      } catch (e) {
+        subscriber.error(new Error('Cant parse existing session. Logging off'));
+      }
+    });
+  }
+
+  private deregisterSessionAndCloseConnection(): void {
     this.sessionDetails = loggedOffSessionDetails;
     this.localStorage.removeItem(SESSION_KEY);
     this.sessionDetailsSubject.next(this.sessionDetails);
     this.chatService.closeWebsocketConnection();
-    this.chatService.openWebSocketConnection();
-  }
-
-  private unauthorizedOrClosed(): void {
-    this.deregisterSession();
-    this.router.navigate(['/login']);
   }
 
 }

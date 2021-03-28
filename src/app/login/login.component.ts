@@ -1,8 +1,9 @@
 import {Component, OnInit} from '@angular/core';
-import {LoginRequest, ResponseStatus, SessionDetails} from '../chat-web-socket.service';
+import {LoginRequest, ResponseStatus} from '../service/web-socket-chat-server.service';
 import {Router} from '@angular/router';
 import {LoginService} from '../service/login.service';
 import {SessionService} from '../service/session.service';
+
 
 @Component({
   selector: 'app-login',
@@ -28,11 +29,26 @@ export class LoginComponent implements OnInit {
     this.loggingIn = true;
     this.error = false;
 
+    this.loginService
+      .getIp()
+      .subscribe(ipResponse => {
+        this.doLogin(username, password, ipResponse.ip);
+      }, exception => {
+        this.doLogin(username, password, '0.0.0.0');
+      });
+  }
+
+  signup(): void {
+    this.router.navigate(['/signup']);
+  }
+
+  private doLogin(username: string, password: string, clientIp: string): void {
+
     const loginRequest: LoginRequest = {
       username,
       password,
       userDeviceDetails: {
-        userIp: '10.198.10.2',
+        userIp: clientIp,
         userAgent: window.navigator?.userAgent,
         screenResolution: {
           width: window.innerWidth?.toString(),
@@ -47,16 +63,8 @@ export class LoginComponent implements OnInit {
       .subscribe(loginResponse => {
 
         if (loginResponse.status === ResponseStatus.SUCCESS) {
-
-          const sessionDetails: SessionDetails = {
-            loggedIn: true,
-            token: loginResponse.token,
-            loggedInUser: loginResponse.user
-          };
-
-          this.sessionService.registerSession(sessionDetails);
+          this.sessionService.registerSession(loginResponse.user);
           this.router.navigate(['/chat']);
-
         } else {
           this.loggingIn = false;
           this.errorMessage = this.getErrorMessage(loginResponse.status);
@@ -64,11 +72,6 @@ export class LoginComponent implements OnInit {
         }
 
       });
-
-  }
-
-  signup(): void {
-    this.router.navigate(['/signup']);
   }
 
   private getErrorMessage(status: ResponseStatus): string {

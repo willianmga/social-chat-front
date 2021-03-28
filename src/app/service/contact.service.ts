@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Observable, Subject} from 'rxjs';
-import {ChatWebSocketService, Contact, MessageType, RequestMessage} from '../chat-web-socket.service';
+import {WebSocketChatServerService, Contact, MessageType, RequestMessage} from './web-socket-chat-server.service';
 import {SessionService} from './session.service';
 import {NotificationService} from './notification.service';
 
@@ -12,7 +12,7 @@ export class ContactService {
   private contactsSubject: Subject<Array<Contact>> = new Subject<Array<Contact>>();
   private newContactSubject: Subject<Contact> = new Subject<Contact>();
 
-  constructor(private chatService: ChatWebSocketService,
+  constructor(private chatService: WebSocketChatServerService,
               private sessionService: SessionService,
               private notificationService: NotificationService) {
     this.subscribe();
@@ -36,8 +36,7 @@ export class ContactService {
   requestContacts(): Observable<Array<Contact>> {
     this.chatService
       .sendWebSocketMessage({
-        type: MessageType.CONTACTS_LIST,
-        token: this.sessionService.getToken()
+        type: MessageType.CONTACTS_LIST
       });
     return this.contactsSubject;
   }

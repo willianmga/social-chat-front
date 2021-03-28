@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {ChatMessage, Contact} from '../chat-web-socket.service';
+import {ChatMessage, Contact} from './web-socket-chat-server.service';
 import {Observable, Subject} from 'rxjs';
 
 export enum NotificationType {

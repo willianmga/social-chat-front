@@ -1,8 +1,12 @@
 import {Injectable} from '@angular/core';
-import {LoginRequest, LoginResponse} from '../chat-web-socket.service';
+import {AuthServerResponse, LoginRequest, LoginResponse} from './web-socket-chat-server.service';
 import {Observable} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 import {environment} from '../../environments/environment';
+
+export interface IpifyResponse {
+  ip: string;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -16,13 +20,14 @@ export class LoginService {
       .post<LoginResponse>(`${environment.authServiceUrl}/v1/auth`, loginRequest);
   }
 
-  test(): Observable<any> {
+  logoff(): Observable<AuthServerResponse> {
     return this.httpClient
-      .post<any>(`${environment.authServiceUrl}/v1/auth/test`, {});
+      .post<AuthServerResponse>(`${environment.authServiceUrl}/v1/auth/logoff`, {});
   }
 
-  getIp(): Observable<any> {
-    return this.httpClient.get('http://api.ipify.org/?format=json');
+  getIp(): Observable<IpifyResponse> {
+    return this.httpClient
+      .get<IpifyResponse>('https://api.my-ip.io/ip.json');
   }
 
 }

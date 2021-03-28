@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {ChatWebSocketService, MessageType, SignupResponse} from '../chat-web-socket.service';
+import {WebSocketChatServerService, MessageType, SignupResponse} from './web-socket-chat-server.service';
 import {Observable, Subject} from 'rxjs';
 
 @Injectable({
@@ -9,7 +9,7 @@ export class SignupService {
 
   private signupSubject: Subject<SignupResponse> = new Subject();
 
-  constructor(private chatService: ChatWebSocketService) {
+  constructor(private chatService: WebSocketChatServerService) {
     this.subscribe();
   }
 

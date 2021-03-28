@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {BehaviorSubject, interval, Observable, Subject} from 'rxjs';
 import {webSocket, WebSocketSubject} from 'rxjs/webSocket';
-import {environment} from '../environments/environment';
+import {environment} from '../../environments/environment';
 
 export enum MessageType {
   CONTACTS_LIST = 'CONTACTS_LIST',
@@ -43,14 +43,12 @@ export enum ResponseStatus {
 
 export interface SessionDetails {
   loggedIn: boolean;
-  token: string;
   loggedInUser: any;
 }
 
 export interface RequestMessage {
   type: MessageType;
   seqId?: number;
-  token?: string;
   payload?: any;
 }
 
@@ -92,14 +90,12 @@ export interface LoginRequest {
 }
 
 export interface LoginResponse {
-  token: string;
   user: User;
   status: ResponseStatus;
   message?: string;
 }
 
 export interface SignupResponse {
-  token: string;
   user: User;
   status: ResponseStatus;
 }
@@ -132,6 +128,11 @@ export interface Contact {
   chatHistory?: Array<ChatMessage>;
 }
 
+export interface AuthServerResponse {
+  message: string,
+  status: ResponseStatus
+}
+
 export enum ChatConnectionStatus {
   CONNECTING = 'Connecting...',
   RECONNECTING = 'Reconnecting...',
@@ -150,7 +151,7 @@ const MAX_RECONNECTION_TRIES = 3;
 @Injectable({
   providedIn: 'root'
 })
-export class ChatWebSocketService {
+export class WebSocketChatServerService {
 
   private chatServerWebSocket: WebSocketSubject<ResponseMessage>;
   private chatServerWebSocketSubject: Subject<ResponseMessage>;
@@ -168,7 +169,6 @@ export class ChatWebSocketService {
 
     this.chatServerWebSocket = webSocket<ResponseMessage>({
       url: `${environment.backendUrl}`
-      // protocol: ['mycookie', 'value']
     });
 
     this.listenWebSocketMessages();
@@ -188,7 +188,9 @@ export class ChatWebSocketService {
   }
 
   closeWebsocketConnection(): void {
-    this.chatServerWebSocket.complete();
+    if (this.chatServerWebSocket) {
+      this.chatServerWebSocket.complete();
+    }
   }
 
   resetConnection(): void {

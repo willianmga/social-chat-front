@@ -3,25 +3,25 @@ import {
   ChatHistoryRequest,
   ChatHistoryResponse,
   ChatMessage,
-  ChatWebSocketService,
+  WebSocketChatServerService,
   Contact,
   ContactType,
   DestinationType,
   MessageType, MimeType,
   RequestMessage
-} from '../chat-web-socket.service';
+} from './web-socket-chat-server.service';
 import {Observable, Subject} from 'rxjs';
 import {SessionService} from './session.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class ChatMessageService {
+export class MessagesService {
 
   private messagesSubject: Subject<ChatMessage> = new Subject<ChatMessage>();
   private chatHistorySubject: Subject<ChatHistoryResponse> = new Subject<ChatHistoryResponse>();
 
-  constructor(private chatService: ChatWebSocketService,
+  constructor(private chatService: WebSocketChatServerService,
               private sessionService: SessionService) {
     this.subscribe();
   }
@@ -59,7 +59,6 @@ export class ChatMessageService {
 
     const newMessage: RequestMessage = {
       type: MessageType.USER_MESSAGE,
-      token: session.token,
       payload: chatMessage
     };
 
@@ -79,7 +78,6 @@ export class ChatMessageService {
 
     const request: RequestMessage = {
       type: MessageType.CHAT_HISTORY,
-      token: this.sessionService.getToken(),
       payload: chatHistoryRequest
     };
 

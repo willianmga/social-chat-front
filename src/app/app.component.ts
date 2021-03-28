@@ -1,10 +1,11 @@
 import {Component} from '@angular/core';
 import {Router} from '@angular/router';
 import {MatDialog} from '@angular/material/dialog';
-import {ChatWebSocketService, SessionDetails} from './chat-web-socket.service';
+import {WebSocketChatServerService, SessionDetails, ResponseStatus} from './service/web-socket-chat-server.service';
 import {SystemInfoComponent} from './system-info/system-info.component';
 import {SessionService} from './service/session.service';
 import {NotificationService, Notification} from './service/notification.service';
+import {LoginService} from './service/login.service';
 
 @Component({
   selector: 'app-root',
@@ -18,8 +19,9 @@ export class AppComponent {
   notifications: Array<Notification> = [];
 
   constructor(private router: Router,
-              private chatService: ChatWebSocketService,
+              private chatService: WebSocketChatServerService,
               private sessionService: SessionService,
+              private loginService: LoginService,
               private notificationService: NotificationService,
               private systemInfoDialog: MatDialog) {
     this.loadData();
@@ -43,8 +45,13 @@ export class AppComponent {
   }
 
   logout(): void {
-    this.sessionService.logoff();
-    this.router.navigate(['/login']);
+    this.loginService.logoff()
+      .subscribe(serverResponse => {
+        if (serverResponse.status === ResponseStatus.SUCCESS) {
+          this.router.navigate(['/login']);
+          this.sessionService.logoff();
+        }
+      });
   }
 
   showSystemInfo(): void {
