@@ -2,7 +2,7 @@
 
 ## Script for automating deployment of app to github pages
 
-export APP_NAME="reactive-chat-front"
+export APP_NAME="social-chat-front"
 export BASE_HREF="/${APP_NAME}/"
 
 # get the latest version
