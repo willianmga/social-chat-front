@@ -2,8 +2,8 @@
 
 PWA Chat application
 
-## LIVE TEST INSTANCE
-https://willianmga.github.io/reactive-chat-front/
+## LIVE INSTANCE
+https://www.socialchat.live/
 
 ## FEATURES
 * User & Group chat
