@@ -4,6 +4,7 @@ import {Router} from '@angular/router';
 import {LoginService} from '../service/login.service';
 import {SessionService} from '../service/session.service';
 
+const SERVER_ERROR_MESSAGE = 'Ops, it\'s. Please, try again.';
 
 @Component({
   selector: 'app-login',
@@ -61,17 +62,21 @@ export class LoginComponent implements OnInit {
     this.loginService
       .login(loginRequest)
       .subscribe(loginResponse => {
-
         if (loginResponse.status === ResponseStatus.SUCCESS) {
           this.sessionService.registerSession(loginResponse.user);
           this.router.navigate(['/chat']);
         } else {
-          this.loggingIn = false;
-          this.errorMessage = this.getErrorMessage(loginResponse.status);
-          this.error = true;
+          this.handleError(this.getErrorMessage(loginResponse.status));
         }
+      }, error => {
+        this.handleError(SERVER_ERROR_MESSAGE);
+    });
+  }
 
-      });
+  private handleError(errorMessage: string): void {
+    this.loggingIn = false;
+    this.errorMessage = errorMessage;
+    this.error = true;
   }
 
   private getErrorMessage(status: ResponseStatus): string {
@@ -79,7 +84,7 @@ export class LoginComponent implements OnInit {
       case ResponseStatus.INVALID_CREDENTIALS:
         return 'Error: Invalid Credentials';
       default:
-        return 'Sorry, It\'s us. Try again..';
+        return SERVER_ERROR_MESSAGE;
     }
   }
 
