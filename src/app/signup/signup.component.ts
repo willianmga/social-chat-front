@@ -1,6 +1,11 @@
 import {Component, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
-import {ResponseStatus} from '../service/web-socket-chat-server.service';
+import {
+  AuthenticationResponse,
+  ResponseStatus,
+  ValidationError,
+  ValidationType
+} from '../service/web-socket-chat-server.service';
 import {SignupService} from '../service/signup.service';
 import {SessionService} from '../service/session.service';
 
@@ -11,10 +16,19 @@ import {SessionService} from '../service/session.service';
 })
 export class SignupComponent implements OnInit {
 
+  unspecifiedErrorMessage = 'Sorry, it\'s us. Try again.';
+  invalidNameErrorMessage = 'Invalid name';
+  invalidUsernameErrorMessage = 'Invalid username';
+  invalidPasswordErrorMessage = 'Invalid password';
+  usernameTakenErrorMessage = 'Username in use. Try another one';
+
   hide = true;
   signingUp = false;
-  error = false;
-  errorMessage?: string;
+  unspecifiedError = false;
+  invalidName = false;
+  invalidUsername = false;
+  invalidPassword = false;
+  usernameTaken = false;
 
   constructor(private router: Router,
               private signUpService: SignupService,
@@ -26,7 +40,11 @@ export class SignupComponent implements OnInit {
   signup(name: string, username: string, password: string): void {
 
     this.signingUp = true;
-    this.error = false;
+    this.unspecifiedError = false;
+    this.invalidName = false;
+    this.invalidUsername = false;
+    this.invalidPassword = false;
+    this.usernameTaken = false;
 
     this.signUpService
       .signup(name, username, password)
@@ -36,11 +54,26 @@ export class SignupComponent implements OnInit {
           this.sessionService.registerSession(signupResponse.user);
           this.router.navigate(['/chat']);
         } else {
-          this.signingUp = false;
-          this.errorMessage = this.getErrorMessage(signupResponse.status);
-          this.error = true;
+          this.unspecifiedError = true;
         }
 
+        this.signingUp = false;
+      }, error => {
+        if (error.status === 400) {
+          const errorResponse: AuthenticationResponse = error.error;
+          if (errorResponse.status === ResponseStatus.INVALID_REQUEST) {
+            this.invalidName = this.hasError(errorResponse.errors, ValidationType.INVALID_NAME);
+            this.invalidUsername = this.hasError(errorResponse.errors, ValidationType.INVALID_USERNAME);
+            this.invalidPassword = this.hasError(errorResponse.errors, ValidationType.INVALID_PASSWORD);
+            this.usernameTaken = this.hasError(errorResponse.errors, ValidationType.USERNAME_IN_USE);
+          }
+        } else if (error.status === 401 || error.status === 403) {
+          this.router.navigate(['/login']);
+        } else {
+          this.unspecifiedError = true;
+        }
+
+        this.signingUp = false;
       });
 
   }
@@ -49,19 +82,9 @@ export class SignupComponent implements OnInit {
     this.router.navigate(['/login']);
   }
 
-  private getErrorMessage(status: ResponseStatus): string {
-    switch (status) {
-      case ResponseStatus.USERNAME_IN_USE:
-        return 'Error: This username is already in use';
-      case ResponseStatus.INVALID_NAME:
-        return 'Error: Invalid name';
-      case ResponseStatus.INVALID_USERNAME:
-        return 'Error: Invalid username';
-      case ResponseStatus.INVALID_PASSWORD:
-        return 'Error: Invalid password';
-      default:
-        return 'Sorry, it\'s us. Try again..';
-    }
+  private hasError(errors: Array<ValidationError>, validationType: ValidationType): boolean {
+    return errors
+      .find(validationError => validationError.type === validationType) !== undefined;
   }
 
 }

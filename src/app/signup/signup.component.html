@@ -11,31 +11,44 @@
 
   <p style="text-align: center;">Create your account now, it's easy!</p>
 
-  <div *ngIf="error" class="errorMessageBox">
-    <p>{{errorMessage}}</p>
+  <div *ngIf="unspecifiedError" class="errorMessageBox">
+    <p>{{unspecifiedErrorMessage}}</p>
   </div>
 
   <mat-card-content>
 
-    <p>
-      <mat-form-field appearance="fill" style="width: 100%;">
-        <mat-label>Your Name</mat-label>
-        <input #nameInput matInput  placeholder="Type your name">
-      </mat-form-field>
+    <mat-form-field appearance="fill" style="width: 100%;">
+      <mat-label>Your Name</mat-label>
+      <input #nameInput matInput placeholder="Type your name">
+      <mat-hint>Letters and space only</mat-hint>
+    </mat-form-field>
+    <div *ngIf="invalidName" class="errorMessageBox">
+      {{invalidNameErrorMessage}}
+    </div>
 
-      <mat-form-field appearance="fill" style="width: 100%;">
-        <mat-label>Username</mat-label>
-        <input #usernameInput matInput placeholder="Type your username">
-      </mat-form-field>
+    <mat-form-field appearance="fill" style="width: 100%;">
+      <mat-label>Username</mat-label>
+      <input #usernameInput matInput placeholder="Type your username">
+      <mat-hint>Letters, numbers and characters .-_</mat-hint>
+    </mat-form-field>
+    <div *ngIf="usernameTaken" class="errorMessageBox">
+      {{usernameTakenErrorMessage}}
+    </div>
+    <div *ngIf="invalidUsername" class="errorMessageBox">
+      {{invalidUsernameErrorMessage}}
+    </div>
 
-      <mat-form-field appearance="fill" style="width: 100%;">
-        <mat-label>Password</mat-label>
-        <input #passwordInput matInput [type]="hide ? 'password' : 'text'" placeholder="Type your password">
-        <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
-          <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
-        </button>
-      </mat-form-field>
-    </p>
+    <mat-form-field appearance="fill" style="width: 100%;">
+      <mat-label>Password</mat-label>
+      <input #passwordInput matInput [type]="hide ? 'password' : 'text'" placeholder="Type your password">
+      <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
+        <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+      </button>
+      <mat-hint>6 letters, numbers and characters !@#$%^&*+=</mat-hint>
+    </mat-form-field>
+    <div *ngIf="invalidPassword" class="errorMessageBox">
+      {{invalidPasswordErrorMessage}}
+    </div>
 
   </mat-card-content>
   <mat-card-footer>

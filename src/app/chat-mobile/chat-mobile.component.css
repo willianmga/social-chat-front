@@ -28,6 +28,12 @@
     "chat-history-container";
 }
 
+.contacts-list {
+  display: flex;
+  flex-direction: row;
+  overflow: auto;
+}
+
 .select-contact-container {
   grid-area: select-contact-container;
   display: none;
@@ -41,7 +47,7 @@
   height: calc(100vh - var(--toolbar-fixed-height));
   grid-row-gap: 10px;
   grid-template-columns: 1fr;
-  grid-template-rows: 90px 1fr 80px;
+  grid-template-rows: 36px 1fr 80px;
   grid-template-areas:
     "contact-details-container"
     "message-history-container"
@@ -57,6 +63,9 @@
 .contact-card {
   height: 36px;
   max-height: 36px;
+  color: black;
+  background: white;
+  border-radius: 0;
 }
 
 /* Chat History Area */

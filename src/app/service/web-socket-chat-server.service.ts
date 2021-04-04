@@ -10,14 +10,7 @@ export enum MessageType {
   USER_MESSAGE = 'USER_MESSAGE',
   PING = 'PING',
   PONG = 'PONG',
-  CONNECTED = 'CONNECTED',
-  DISCONNECTED = 'DISCONNECTED',
-  AUTHENTICATE = 'AUTHENTICATE',
-  REAUTHENTICATE = 'REAUTHENTICATE',
-  SIGNUP = 'SIGNUP',
-  LOGOFF = 'LOGOFF',
   NOT_AUTHENTICATED = 'NOT_AUTHENTICATED',
-  NOT_AUTHORIZED = 'NOT_AUTHORIZED'
 }
 
 export enum DestinationType {
@@ -33,11 +26,17 @@ export enum ContactType {
 
 export enum ResponseStatus {
   SUCCESS = 'SUCCESS',
+  INVALID_REQUEST = 'INVALID_REQUEST',
+  AUTHENTICATION_ERROR = 'AUTHENTICATION_ERROR',
   INVALID_CREDENTIALS = 'INVALID_CREDENTIALS',
+  EXPIRED_TOKEN = 'EXPIRED_TOKEN',
+  SERVER_ERROR = 'SERVER_ERROR'
+}
+
+export enum ValidationType {
   INVALID_NAME = 'INVALID_NAME',
   INVALID_USERNAME = 'INVALID_USERNAME',
   INVALID_PASSWORD = 'INVALID_PASSWORD',
-  SERVER_ERROR = 'SERVER_ERROR',
   USERNAME_IN_USE = 'USERNAME_IN_USE'
 }
 
@@ -89,15 +88,16 @@ export interface LoginRequest {
   userDeviceDetails: UserDeviceDetails;
 }
 
-export interface LoginResponse {
+export interface ValidationError {
+  message: string;
+  type: ValidationType;
+}
+
+export interface AuthenticationResponse {
   user: User;
   status: ResponseStatus;
   message?: string;
-}
-
-export interface SignupResponse {
-  user: User;
-  status: ResponseStatus;
+  errors?: Array<ValidationError>;
 }
 
 export interface ChatHistoryRequest {

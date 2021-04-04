@@ -1,42 +1,32 @@
 import {Injectable} from '@angular/core';
-import {WebSocketChatServerService, MessageType, SignupResponse} from './web-socket-chat-server.service';
-import {Observable, Subject} from 'rxjs';
+import {AuthenticationResponse} from './web-socket-chat-server.service';
+import {Observable} from 'rxjs';
+import {HttpClient} from '@angular/common/http';
+import {environment} from '../../environments/environment';
+
+export interface SignUpRequest {
+  username: string;
+  password: string;
+  name: string;
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class SignupService {
 
-  private signupSubject: Subject<SignupResponse> = new Subject();
+  constructor(private httpClient: HttpClient) {}
 
-  constructor(private chatService: WebSocketChatServerService) {
-    this.subscribe();
-  }
+  signup(name: string, username: string, password: string): Observable<AuthenticationResponse> {
 
-  private subscribe(): void {
-    this.chatService
-      .getWebSocketObservable()
-      .subscribe(responseMessage => {
-        const messagePayload = responseMessage.payload;
-        if (responseMessage.type === MessageType.SIGNUP) {
-          this.signupSubject.next(messagePayload);
-        }
-      });
-  }
+    const signUpRequest: SignUpRequest = {
+        name,
+        username,
+        password
+    };
 
-  signup(name: string, username: string, password: string): Observable<SignupResponse> {
-
-    this.chatService
-      .sendWebSocketMessage({
-        type: MessageType.SIGNUP,
-        payload: {
-          name,
-          username,
-          password
-        }
-    });
-
-    return this.signupSubject;
+    return this.httpClient
+      .post<AuthenticationResponse>(`${environment.authServiceUrl}/v1/signup`, signUpRequest)
   }
 
 }

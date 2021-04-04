@@ -18,23 +18,26 @@
       </mat-card-header>
     </mat-card>
 
-    <!-- Lateral Contact List Area: Mobile Mode -->
-    <mat-selection-list [multiple]="false" *ngIf="mobileMode">
-      <mat-list-option class="contact-option" *ngFor="let contact of contacts" (click)="openContact(contact)">
-        <img mat-list-avatar src="{{contact?.avatar}}"/>
-        <span style="font-weight: bold">{{contact.name}}</span>
-        <p style="font-size: x-small" *ngIf="!hasUnreadMessage(contact)">{{contact.description}}</p>
-        <p style="font-size: x-small; font-weight: bold" *ngIf="hasUnreadMessage(contact)">{{ getLastReceivedMessage(contact) }}</p>
-        <mat-divider></mat-divider>
-      </mat-list-option>
-    </mat-selection-list>
+    <div class="contacts-list">
 
-    <!-- Lateral Contact List Area: Desktop/Tablet Mode -->
-    <mat-selection-list class="contact-list" [multiple]="false"  *ngIf="!mobileMode">
-      <mat-list-option *ngFor="let contact of contacts" (click)="openContact(contact)">
-        {{contact.name}}
-      </mat-list-option>
-    </mat-selection-list>
+      <!-- Lateral Contact List Area: Mobile Mode -->
+      <mat-selection-list [multiple]="false" *ngIf="mobileMode">
+        <mat-list-option class="contact-option" *ngFor="let contact of contacts" (click)="openContact(contact)">
+          <img mat-list-avatar src="{{contact?.avatar}}"/>
+          <span style="font-weight: bold">{{contact.name}}</span>
+          <p style="font-size: x-small" *ngIf="!hasUnreadMessage(contact)">{{contact.description}}</p>
+          <p style="font-size: x-small; font-weight: bold" *ngIf="hasUnreadMessage(contact)">{{ getLastReceivedMessage(contact) }}</p>
+        </mat-list-option>
+      </mat-selection-list>
+
+      <!-- Lateral Contact List Area: Desktop/Tablet Mode -->
+      <mat-selection-list class="contact-list" [multiple]="false"  *ngIf="!mobileMode">
+        <mat-list-option *ngFor="let contact of contacts" (click)="openContact(contact)">
+          <span [style.fonnt-weight]="hasUnreadMessage(contact) ? 'bold' : 'none'">{{contact.name}}</span>
+        </mat-list-option>
+      </mat-selection-list>
+
+    </div>
 
   </div>
 
@@ -55,7 +58,6 @@
           <mat-card-header>
             <img mat-card-avatar src="{{selectedContact?.avatar}}"/>
             <mat-card-title>{{selectedContact?.name}}</mat-card-title>
-            <mat-card-subtitle>{{selectedContact?.description}}</mat-card-subtitle>
             <!-- TODO: move button to the right -->
             <button mat-icon-button class="mediumIcon"  *ngIf="mobileMode" (click)="closeContact()">
               <mat-icon [inline]="true">keyboard_return</mat-icon>

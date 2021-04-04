@@ -21,10 +21,8 @@ body {
 }
 
 .errorMessageBox {
-  padding: 3px;
-  margin: 10px 0;
-  background: #f08981;
+  padding: 5px 10px;
   border: 1px solid red;
-  text-align: center;
   color: white;
+  border-radius: 10px;
 }
